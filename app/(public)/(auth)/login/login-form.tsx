@@ -7,8 +7,13 @@ import { useForm } from 'react-hook-form'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useLogin } from '@/queries/useAuth'
+import { describe } from 'node:test'
+import { toast } from '@/hooks/use-toast'
+import { handleErrorApi } from '@/lib/utils'
 
 export default function LoginForm() {
+  const  loginMuutation = useLogin()
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -17,6 +22,22 @@ export default function LoginForm() {
     }
   })
 
+  const onSubmit = async(data: LoginBodyType) => {
+    // khi submit thì react hook form validate form bằng zod schema ở client trc
+    if (loginMuutation.isPending) return;
+    try{
+      const res=await loginMuutation.mutateAsync(data)
+      toast({
+        description: res.payload.message 
+      })
+      
+    }catch(error:any){
+      handleErrorApi({
+        error,
+        setError: form.setError
+      })      
+    }
+  }
   return (
     <Card className='mx-auto max-w-sm'>
       <CardHeader>
@@ -25,7 +46,8 @@ export default function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate>
+          <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate 
+          onSubmit={form.handleSubmit(onSubmit)}>
             <div className='grid gap-4'>
               <FormField
                 control={form.control}

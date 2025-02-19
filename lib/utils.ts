@@ -20,18 +20,18 @@ export const normalizePath = (path: string) => {
   return path.startsWith('/') ? path.slice(1) : path
 }
 
-export const handleErrorApi = <T extends FieldValues>({
+export const handleErrorApi = ({
   error,
   setError,
   duration
 }: {
-  error: HttpError | EntityError
-  setError?: UseFormSetError<T>
+  error:any
+  setError?: UseFormSetError<any>
   duration?: number
 }) => {
   if (error instanceof EntityError && setError) {
     error.payload.errors.forEach((item) => {
-      setError(item.field as Path<T>, { 
+      setError(item.field as Path<any>, { 
         type: 'server',
         message: item.message
       })

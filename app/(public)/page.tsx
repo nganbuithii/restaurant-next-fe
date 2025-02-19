@@ -14,8 +14,8 @@ export default function Home() {
           className='absolute top-0 left-0 w-full h-full object-cover'
         />
         <div className='z-20 relative py-10 md:py-20 px-4 sm:px-10 md:px-20'>
-          <h1 className='text-center text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold'>Nhà hàng Big Boy</h1>
-          <p className='text-center text-sm sm:text-base mt-4'>Vị ngon, trọn khoảnh khắc</p>
+          <h1 className='text-center text-white text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold'>Nhà hàng Naniri</h1>
+          <p className='text-center text-sm sm:text-base mt-4 text-white'>Vị ngon, trọn khoảnh khắc</p>
         </div>
       </div>
       <section className='space-y-10 py-16'>
