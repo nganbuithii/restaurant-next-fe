@@ -1,9 +1,31 @@
-import { LoginBodyType, LoginResType } from './../schemaValidations/auth.schema';
+import { access } from 'fs';
+import { LoginBodyType, LoginResType, LogoutBodyType } from './../schemaValidations/auth.schema';
 import http from "@/lib/http";
 
-const authApiRequest={
-    serverLogin: (body:LoginBodyType) => http.post<LoginResType>('/auth/login', body, { headers: { 'Content-Type': 'application/json' } }),
+const authApiRequest = {
+    serverLogin: (body: LoginBodyType) => http.post<LoginResType>('/auth/login', body, { headers: { 'Content-Type': 'application/json' } }),
 
-    login: (body:LoginBodyType) => http.post<LoginResType>('/api/auth/login', body, {baseUrl:'', headers: { 'Content-Type': 'application/json' }}),}
+    login: (body: LoginBodyType) => http.post<LoginResType>('/api/auth/login', body, { baseUrl: '', headers: { 'Content-Type': 'application/json' } }),
+    sLogout: (
+        body: LogoutBodyType & {
+            accessToken: string
+        }
+    ) =>
+        http.post(
+            '/auth/logout',
+            {
+                refreshToken: body.refreshToken
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${body.accessToken}`
+                }
+            }
+        ),
+    logout: () => http.post('/api/auth/logout', null, { baseUrl: '' }), // client gọi đến route handler, không cần truyền AccessT và RefreshT vào body vì AT và RT tự  động gửi thông qua cookie rồi
+
+
+}
+
 
 export default authApiRequest;
