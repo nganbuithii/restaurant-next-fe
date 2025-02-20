@@ -7,3 +7,10 @@ export const useLogin = () => {
         
     })
 }
+
+
+export const useLogOut = () => {
+    return useMutation({
+        mutationFn:authApiRequest.logout
+    })
+}
