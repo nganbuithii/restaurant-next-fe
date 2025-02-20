@@ -11,9 +11,11 @@ import { useLogin } from '@/queries/useAuth'
 import { describe } from 'node:test'
 import { toast } from '@/hooks/use-toast'
 import { handleErrorApi } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
 
 export default function LoginForm() {
   const  loginMuutation = useLogin()
+  const router = useRouter()
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -30,7 +32,7 @@ export default function LoginForm() {
       toast({
         description: res.payload.message 
       })
-      
+      router.push('/manage/dashboard')
     }catch(error:any){
       handleErrorApi({
         error,
