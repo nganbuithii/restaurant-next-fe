@@ -9,7 +9,7 @@ const unAuthPath = ['/login']
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const accessToken = request.cookies.get('accessToken')?.value;
-   const refreshToken = request.cookies.get('refreshToken')?.value;
+    const refreshToken = request.cookies.get('refreshToken')?.value;
     const isAuth = Boolean(accessToken);
     // console.log("Middleware Running:", { pathname, accessToken, refreshToken });
 
@@ -17,12 +17,14 @@ export function middleware(request: NextRequest) {
 
     // Nếu truy cập trang cần quyền (privatePath) mà chưa đăng nhập => Chuyển hướng đến trang login
     if (privatePath.some(path => pathname.startsWith(path)) && !refreshToken) {
+        const url = new URL('/login', request.url)
+        url.searchParams.set('clearToken', 'true')
         return NextResponse.redirect(new URL('/login', request.url));
     }
     // nếu login rồi, nhưng accessToken hết hạn, thì chuyển hướng đến trang logout
     if (privatePath.some(path => pathname.startsWith(path)) && !accessToken && refreshToken) {
         const url = new URL('/logout', request.url)
-        url.searchParams.set('refreshToken',refreshToken)
+        url.searchParams.set('refreshToken', refreshToken)
         return NextResponse.redirect(url);
     }
 
@@ -35,7 +37,7 @@ export function middleware(request: NextRequest) {
     //     response.cookies.set('accessToken', '', { expires: new Date(0) }); // Xóa cookie
     //     return response;
     // }
-    
+
     return NextResponse.next();
 }
 

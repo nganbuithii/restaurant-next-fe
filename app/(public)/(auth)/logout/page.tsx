@@ -1,5 +1,6 @@
 'use client'
 
+import { useAppContext } from "@/components/app-provider";
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from "@/lib/utils";
 import { useLogOut } from "@/queries/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,6 +10,8 @@ export default function LogoutPage() {
     const router = useRouter();
     const { mutateAsync } = useLogOut(); 
     const ref = useRef<any>(null);
+
+    const {setIsAuth} = useAppContext()
 
     const searchParams= useSearchParams()
     const refreshTokenFrommUrl = searchParams.get('refreshToken')
@@ -21,6 +24,7 @@ export default function LogoutPage() {
             setTimeout(() => {
                 ref.current=null
             }, 1000);
+            setIsAuth(false)
             router.push("/login");
         })
     }, [mutateAsync, router, refreshTokenFrommUrl, accessTokenFromUrl]); 

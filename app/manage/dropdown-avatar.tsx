@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { useLogOut } from '@/queries/useAuth'
 import { useRouter } from 'next/navigation'
 import { useAccountProfile } from '@/queries/useAccount'
+import { useAppContext } from '@/components/app-provider'
 
 
 export default function DropdownAvatar() {
@@ -21,9 +22,12 @@ export default function DropdownAvatar() {
   const {data} = useAccountProfile()
   const account = data?.payload.data 
 
+  const {setIsAuth} = useAppContext()
+
   const handleLogout = async () => {
     if (logoutMutation.isPending) return;
     await logoutMutation.mutateAsync()
+    setIsAuth(false)
     router.push('/')
   }
   return (

@@ -14,6 +14,7 @@ export default function RefreshToken() {
     useEffect(() => {
         if (UNAUTHENTICATED_ROUTES.includes(pathname)) return
 
+      
         let interval: any = null
         checkRefreshToken({
             onError: () => {

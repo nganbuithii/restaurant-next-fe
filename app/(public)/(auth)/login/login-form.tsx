@@ -10,12 +10,18 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useLogin } from '@/queries/useAuth'
 import { describe } from 'node:test'
 import { toast } from '@/hooks/use-toast'
-import { handleErrorApi } from '@/lib/utils'
-import { useRouter } from 'next/navigation'
+import { handleErrorApi, removeTokensFromLocalStorage } from '@/lib/utils'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
+import { useAppContext } from '@/components/app-provider'
 
 export default function LoginForm() {
   const  loginMuutation = useLogin()
+  const { setIsAuth } = useAppContext()
+
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const clearToken = searchParams.get('clearToken')
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -24,6 +30,11 @@ export default function LoginForm() {
     }
   })
 
+  useEffect(()=>{
+    if(clearToken){
+      setIsAuth(false)
+    }
+  },[clearToken, setIsAuth])
   const onSubmit = async(data: LoginBodyType) => {
     // khi submit thì react hook form validate form bằng zod schema ở client trc
     if (loginMuutation.isPending) return;
@@ -32,6 +43,7 @@ export default function LoginForm() {
       toast({
         description: res.payload.message 
       })
+      setIsAuth(true)
       router.push('/manage/dashboard')
     }catch(error:any){
       handleErrorApi({
