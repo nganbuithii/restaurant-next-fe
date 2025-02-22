@@ -1,6 +1,6 @@
-import { EntityError, HttpError } from '@/lib/http'
+import { EntityError } from '@/lib/http'
 import { type ClassValue, clsx } from 'clsx'
-import { FieldValues, Path, UseFormSetError } from 'react-hook-form'
+import { Path, UseFormSetError } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 import envConfig from '@/config'
 import { format } from 'date-fns'
@@ -9,6 +9,9 @@ import { io } from 'socket.io-client'
 import slugify from 'slugify'
 import { DishStatus, OrderStatus } from '@/constant/type'
 import { toast } from '@/hooks/use-toast'
+import jwt from "jsonwebtoken"
+import authApiRequest from '@/apiRequests/auth'
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -25,13 +28,13 @@ export const handleErrorApi = ({
   setError,
   duration
 }: {
-  error:any
+  error: any
   setError?: UseFormSetError<any>
   duration?: number
 }) => {
   if (error instanceof EntityError && setError) {
     error.payload.errors.forEach((item) => {
-      setError(item.field as Path<any>, { 
+      setError(item.field as Path<any>, {
         type: 'server',
         message: item.message
       })
@@ -58,57 +61,45 @@ export const setAccessTokenToLocalStorage = (value: string) =>
 
 export const setRefreshTokenToLocalStorage = (value: string) =>
   isBrowser && localStorage.setItem('refreshToken', value)
-// export const removeTokensFromLocalStorage = () => {
-//   isBrowser && localStorage.removeItem('accessToken')
-//   isBrowser && localStorage.removeItem('refreshToken')
-// }
-// export const checkAndRefreshToken = async (param?: {
-//   onError?: () => void
-//   onSuccess?: () => void
-//   force?: boolean
-// }) => {
-//   // Không nên đưa logic lấy access và refresh token ra khỏi cái function `checkAndRefreshToken`
-//   // Vì để mỗi lần mà checkAndRefreshToken() được gọi thì chúng ta se có một access và refresh token mới
-//   // Tránh hiện tượng bug nó lấy access và refresh token cũ ở lần đầu rồi gọi cho các lần tiếp theo
-//   const accessToken = getAccessTokenFromLocalStorage()
-//   const refreshToken = getRefreshTokenFromLocalStorage()
-//   // Chưa đăng nhập thì cũng không cho chạy
-//   if (!accessToken || !refreshToken) return
-//   const decodedAccessToken = decodeToken(accessToken)
-//   const decodedRefreshToken = decodeToken(refreshToken)
-//   // Thời điểm hết hạn của token là tính theo epoch time (s)
-//   // Còn khi các bạn dùng cú pháp new Date().getTime() thì nó sẽ trả về epoch time (ms)
-//   const now = Math.round(new Date().getTime() / 1000)
-//   // trường hợp refresh token hết hạn thì cho logout
-//   if (decodedRefreshToken.exp <= now) {
-//     removeTokensFromLocalStorage()
-//     return param?.onError && param.onError()
-//   }
-//   // Ví dụ access token của chúng ta có thời gian hết hạn là 10s
-//   // thì mình sẽ kiểm tra còn 1/3 thời gian (3s) thì mình sẽ cho refresh token lại
-//   // Thời gian còn lại sẽ tính dựa trên công thức: decodedAccessToken.exp - now
-//   // Thời gian hết hạn của access token dựa trên công thức: decodedAccessToken.exp - decodedAccessToken.iat
-//   if (
-//     param?.force ||
-//     decodedAccessToken.exp - now <
-//       (decodedAccessToken.exp - decodedAccessToken.iat) / 3
-//   ) {
-//     // Gọi API refresh token
-//     try {
-//       const role = decodedRefreshToken.role
-//       const res =
-//         role === Role.Guest
-//           ? await guestApiRequest.refreshToken()
-//           : await authApiRequest.refreshToken()
-//       setAccessTokenToLocalStorage(res.payload.data.accessToken)
-//       setRefreshTokenToLocalStorage(res.payload.data.refreshToken)
-//       param?.onSuccess && param.onSuccess()
-//     } catch (error) {
-//       param?.onError && param.onError()
-//     }
-//   }
-// }
+export const removeTokensFromLocalStorage = () => {
+  isBrowser && localStorage.removeItem('accessToken')
+  isBrowser && localStorage.removeItem('refreshToken')
+}
+export const checkRefreshToken = async (param?: {
+  onError?: () => void,
+  onSuccess?: () => void
+}) => {
+  const accessToken = getAccessTokenFromLocalStorage()
+  const refreshToken = getRefreshTokenFromLocalStorage()
+  console.log("access", accessToken)
+  console.log("refresh", refreshToken)
 
+  if (!accessToken || !refreshToken) return
+
+  const now = (new Date().getTime() / 1000) - 1 
+  // - 1 s vì cookie set bị chậm hơn khoảng vài tẳng mili s
+  const decodeAccessToken = jwt.decode(accessToken) as { exp: number, iat: number }
+  const decodeRefreshToken = jwt.decode(refreshToken) as { exp: number, iat: number }
+
+  if (decodeRefreshToken.exp <= now) {
+    removeTokensFromLocalStorage()
+    param?.onError && param.onError()     
+    return
+
+  }
+
+  if (decodeAccessToken.exp - now < (decodeAccessToken.exp - decodeAccessToken.iat) / 3) {
+    try {
+      const res = await authApiRequest.refreshToken()
+      console.log("res", res)
+      setAccessTokenToLocalStorage(res.payload.data.accessToken)
+      setRefreshTokenToLocalStorage(res.payload.data.refreshToken)
+      param?.onSuccess && param.onSuccess()
+    } catch (error) {
+      param?.onError && param.onError()
+    }
+  }
+}
 export const formatCurrency = (number: number) => {
   return new Intl.NumberFormat('vi-VN', {
     style: 'currency',
@@ -177,7 +168,7 @@ export const wrapServerApi = async <T>(fn: () => Promise<T>) => {
   let result: T | null = null
   try {
     result = await fn()
-  } catch (error: unknown) {  
+  } catch (error: unknown) {
     if (
       typeof error === 'object' &&
       error !== null &&
