@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     const accessToken = request.cookies.get('accessToken')?.value;
    const refreshToken = request.cookies.get('refreshToken')?.value;
     const isAuth = Boolean(accessToken);
-    console.log("Middleware Running:", { pathname, accessToken, refreshToken });
+    // console.log("Middleware Running:", { pathname, accessToken, refreshToken });
 
     // console.log("isAuth:", isAuth, "Path:", pathname);
 
@@ -30,7 +30,12 @@ export function middleware(request: NextRequest) {
     if (unAuthPath.some(path => pathname.startsWith(path)) && accessToken) {
         return NextResponse.redirect(new URL('/', request.url));
     }
-
+    if (privatePath.some(path => pathname.startsWith(path)) && !accessToken) {
+        const response = NextResponse.redirect(new URL('/login', request.url));
+        response.cookies.set('accessToken', '', { expires: new Date(0) }); // Xóa cookie
+        return response;
+    }
+    
     return NextResponse.next();
 }
 

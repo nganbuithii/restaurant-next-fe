@@ -1,5 +1,5 @@
 import { access } from 'fs';
-import { LoginBodyType, LoginResType, LogoutBodyType } from './../schemaValidations/auth.schema';
+import { LoginBodyType, LoginResType, LogoutBodyType, RefreshTokenBodyType, RefreshTokenResType } from './../schemaValidations/auth.schema';
 import http from "@/lib/http";
 
 const authApiRequest = {
@@ -23,6 +23,8 @@ const authApiRequest = {
             }
         ),
     logout: () => http.post('/api/auth/logout', null, { baseUrl: '' }), // client gọi đến route handler, không cần truyền AccessT và RefreshT vào body vì AT và RT tự  động gửi thông qua cookie rồi
+    severRefreshToken: (body : RefreshTokenBodyType) => http.post<RefreshTokenResType>('/auth/refresh-token', body),
+    refreshToken : () => http.post<RefreshTokenBodyType>('/api/auth/refresh-token', null, { baseUrl: '' })
 
 
 }
