@@ -17,10 +17,14 @@ const queryClient = new QueryClient({
     }
 })
 
-const AppContext = createContext({
+const AppContext = createContext<{
+    isAuth: boolean;
+    setIsAuth: (isAuth: boolean) => void;
+}>({
     isAuth: false,
-    setIsAuth: (isAuth: Boolean) => { }
-})
+    setIsAuth: () => {}
+});
+
 
 export const useAppContext = () => {
     return useContext(AppContext)
@@ -45,7 +49,8 @@ export default function AppProvider({ children }: { children: React.ReactNode })
         }
     },[])
     return (
-        <AppContext.Provider value={{ isAuth: false, setIsAuth: () => { } }}>
+        <AppContext.Provider value={{ isAuth, setIsAuth }}>
+
             <QueryClientProvider client={queryClient}>
                 {children}
                 <ReactQueryDevtools initialIsOpen={false} />

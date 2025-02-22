@@ -4,34 +4,40 @@ import { useAppContext } from "@/components/app-provider";
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from "@/lib/utils";
 import { useLogOut } from "@/queries/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 
-export default function LogoutPage() {
+
+function Logout() {
     const router = useRouter();
-    const { mutateAsync } = useLogOut(); 
+    const { mutateAsync } = useLogOut();
     const ref = useRef<any>(null);
 
-    const {setIsAuth} = useAppContext()
+    const { setIsAuth } = useAppContext()
 
-    const searchParams= useSearchParams()
+    const searchParams = useSearchParams()
     const refreshTokenFrommUrl = searchParams.get('refreshToken')
     const accessTokenFromUrl = searchParams.get('accessToken')
     useEffect(() => {
-        if(ref.current || (refreshTokenFrommUrl && refreshTokenFrommUrl !== getRefreshTokenFromLocalStorage() ) || ( accessTokenFromUrl && accessTokenFromUrl !== getAccessTokenFromLocalStorage())) return;
-        ref.current= mutateAsync();
+        if (ref.current || (refreshTokenFrommUrl && refreshTokenFrommUrl === getRefreshTokenFromLocalStorage()) || (accessTokenFromUrl && accessTokenFromUrl === getAccessTokenFromLocalStorage())) {
+            ref.current = mutateAsync
+            mutateAsync().then((res) => {
+                setTimeout(() => {
+                    ref.current = null
+                }, 1000)
+                router.push('/login')
+            })
+        }
+        else if (accessTokenFromUrl !== getAccessTokenFromLocalStorage()) {
+            router.push('/')
+        }
+    }, [mutateAsync, router, refreshTokenFrommUrl, accessTokenFromUrl, setIsAuth]);
 
-        mutateAsync().then(() => {
-            setTimeout(() => {
-                ref.current=null
-            }, 1000);
-            setIsAuth(false)
-            router.push("/login");
-        })
-    }, [mutateAsync, router, refreshTokenFrommUrl, accessTokenFromUrl]); 
-
+    return null
+}
+export default function LogoutPage() {
     return (
-        <div>
-            <h1>Logging out</h1>
-        </div>
-    );
+        <Suspense fallback={<div>Loading..</div>}>
+            <Logout />
+        </Suspense>
+    )
 }

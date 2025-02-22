@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const accessToken = request.cookies.get('accessToken')?.value;
     const refreshToken = request.cookies.get('refreshToken')?.value;
-    const isAuth = Boolean(accessToken);
+    // const isAuth = Boolean(accessToken);
     // console.log("Middleware Running:", { pathname, accessToken, refreshToken });
 
     // console.log("isAuth:", isAuth, "Path:", pathname);

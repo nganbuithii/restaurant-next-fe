@@ -1,11 +1,9 @@
 import { access } from 'fs';
 import authApiRequest from "@/apiRequests/auth"
 import { cookies } from "next/headers"
-export async function POST(req: Request) {
-    return Response.json({ message: "Đăng xuất thành công" });
-}
 
-export async function authRoutes(request: Request) {
+
+export async function POST(req: Request) {
     const cookiesSrore = cookies()
     const accessToken = cookiesSrore.get('accessToken')?.value
     const refreshToken = cookiesSrore.get('refreshToken')?.value
@@ -29,4 +27,5 @@ export async function authRoutes(request: Request) {
 
 
     }
+    return Response.json({ message: "Đăng xuất thành công" });
 }
