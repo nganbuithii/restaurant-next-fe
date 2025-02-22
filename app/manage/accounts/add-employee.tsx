@@ -14,10 +14,14 @@ import { Label } from '@/components/ui/label'
 import { CreateEmployeeAccountBody, CreateEmployeeAccountBodyType } from '@/schemaValidations/account.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle, Upload } from 'lucide-react'
-import { useMemo, useRef, useState } from 'react'
+import { use, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useAddAccount } from '@/queries/useAccount'
+import { useUploadmedia } from '@/queries/useMedia'
+import { handleErrorApi } from '@/lib/utils'
+import { toast } from '@/hooks/use-toast'
 
 export default function AddEmployee() {
   const [file, setFile] = useState<File | null>(null)
@@ -35,13 +39,50 @@ export default function AddEmployee() {
   })
   const avatar = form.watch('avatar')
   const name = form.watch('name')
+  const uploadMediaMutation = useUploadmedia()
+  const addEmployeeMutation = useAddAccount()
+  const reset = () => {
+    form.reset()
+    setFile(null)
+  }
+
   const previewAvatarFromFile = useMemo(() => {
     if (file) {
       return URL.createObjectURL(file)
     }
     return avatar
   }, [file, avatar])
+  const onSubmit = async (data: CreateEmployeeAccountBodyType) => {
+    console.log("Form Submitted", data)
+    if (addEmployeeMutation.isPending) return
+    try {
+      let body = data
 
+      // nếu có ảnh thì upload ảnh
+      if (file) {
+        const formData = new FormData()
+        formData.append('file', file)
+        const result = await uploadMediaMutation.mutateAsync(formData)
+        const imgUrl = result.payload.data
+        body = {
+          ...data,
+          avatar: imgUrl
+        }
+      }
+      console.log("Updating profile with:", body)
+      const kq = await addEmployeeMutation.mutateAsync(body)
+      toast({
+        description: kq.payload.message,
+      })
+      reset()
+      setOpen(false)
+    } catch (error) {
+      handleErrorApi({
+        error,
+        setError: form.setError,
+      })
+    }
+  }
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
@@ -56,7 +97,7 @@ export default function AddEmployee() {
           <DialogDescription>Các trường tên, email, mật khẩu là bắt buộc</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='add-employee-form'>
+          <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='add-employee-form' onReset={reset} onSubmit={form.handleSubmit(onSubmit)}>
             <div className='grid gap-4 py-4'>
               <FormField
                 control={form.control}
