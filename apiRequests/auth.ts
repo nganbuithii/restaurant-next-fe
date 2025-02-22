@@ -3,6 +3,10 @@ import { LoginBodyType, LoginResType, LogoutBodyType, RefreshTokenBodyType, Refr
 import http from "@/lib/http";
 
 const authApiRequest = {
+    refreshTokenRequest:null as Promise<{
+        status:number,
+        payload: RefreshTokenResType
+    }> | null,
     serverLogin: (body: LoginBodyType) => http.post<LoginResType>('/auth/login', body, { headers: { 'Content-Type': 'application/json' } }),
 
     login: (body: LoginBodyType) => http.post<LoginResType>('/api/auth/login', body, { baseUrl: '', headers: { 'Content-Type': 'application/json' } }),
@@ -23,10 +27,16 @@ const authApiRequest = {
             }
         ),
     logout: () => http.post('/api/auth/logout', null, { baseUrl: '' }), // client gọi đến route handler, không cần truyền AccessT và RefreshT vào body vì AT và RT tự  động gửi thông qua cookie rồi
+   
     severRefreshToken: (body : RefreshTokenBodyType) => http.post<RefreshTokenResType>('/auth/refresh-token', body),
-    refreshToken : () => http.post<RefreshTokenBodyType>('/api/auth/refresh-token', null, { baseUrl: '' })
-
-
+    async refreshToken() {
+        if(this.refreshTokenRequest) return this.refreshTokenRequest
+        this.refreshTokenRequest = http.post<RefreshTokenResType>('/api/auth/refresh-token', null, { baseUrl: '' })
+        const result = await this.refreshTokenRequest
+        this.refreshTokenRequest = null
+        return result    
+    }
+   
 }
 
 

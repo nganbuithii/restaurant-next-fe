@@ -1,14 +1,14 @@
 import authApiRequest from "@/apiRequests/auth"
-import { LoginBodyType, RefreshTokenBodyType } from "@/schemaValidations/auth.schema"
 import { cookies } from "next/headers"
 import jwt from "jsonwebtoken"
-import { HttpError } from "@/lib/http"
 export async function POST(request: Request) {
     const cookiesSrore = cookies()
     const refreshToken = cookiesSrore.get('refreshToken')?.value
     if (!refreshToken) {
         return Response.json({ message: 'Unauthorized' }, { status: 401 })
     }
+    console.log("refreshToken từ cookies:", refreshToken)  // Debug giá trị
+
     try {
         const { payload } = await authApiRequest.severRefreshToken({ refreshToken })
         const decodeAccessToken = jwt.decode(payload.data.accessToken) as { exp: number }

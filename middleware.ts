@@ -30,11 +30,11 @@ export function middleware(request: NextRequest) {
     if (unAuthPath.some(path => pathname.startsWith(path)) && accessToken) {
         return NextResponse.redirect(new URL('/', request.url));
     }
-    if (privatePath.some(path => pathname.startsWith(path)) && !accessToken) {
-        const response = NextResponse.redirect(new URL('/login', request.url));
-        response.cookies.set('accessToken', '', { expires: new Date(0) }); // Xóa cookie
-        return response;
-    }
+    // if (privatePath.some(path => pathname.startsWith(path)) && !accessToken) {
+    //     const response = NextResponse.redirect(new URL('/login', request.url));
+    //     response.cookies.set('accessToken', '', { expires: new Date(0) }); // Xóa cookie
+    //     return response;
+    // }
     
     return NextResponse.next();
 }
