@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { BookX, CookingPot, HandCoins, Loader, Truck } from 'lucide-react'
 import { io } from 'socket.io-client'
 import slugify from 'slugify'
-import { DishStatus, OrderStatus } from '@/constant/type'
+import { DishStatus, OrderStatus, TableStatus } from '@/constant/type'
 import { toast } from '@/hooks/use-toast'
 import jwt from "jsonwebtoken"
 import authApiRequest from '@/apiRequests/auth'
@@ -107,9 +107,7 @@ export const formatCurrency = (number: number) => {
   }).format(number)
 }
 
-export const getVietnameseDishStatus = (
-  status: (typeof DishStatus)[keyof typeof DishStatus]
-) => {
+export const getVietnameseDishStatus = (status: (typeof DishStatus)[keyof typeof DishStatus]) => {
   switch (status) {
     case DishStatus.Available:
       return 'Có sẵn'
@@ -119,9 +117,32 @@ export const getVietnameseDishStatus = (
       return 'Ẩn'
   }
 }
-// export const decodeToken = (token: string) => {
-//   return jwtDecode(token) as TokenPayload
-// }
+
+export const getVietnameseOrderStatus = (status: (typeof OrderStatus)[keyof typeof OrderStatus]) => {
+  switch (status) {
+    case OrderStatus.Delivered:
+      return 'Đã phục vụ'
+    case OrderStatus.Paid:
+      return 'Đã thanh toán'
+    case OrderStatus.Pending:
+      return 'Chờ xử lý'
+    case OrderStatus.Processing:
+      return 'Đang nấu'
+    default:
+      return 'Từ chối'
+  }
+}
+
+export const getVietnameseTableStatus = (status: (typeof TableStatus)[keyof typeof TableStatus]) => {
+  switch (status) {
+    case TableStatus.Available:
+      return 'Có sẵn'
+    case TableStatus.Reserved:
+      return 'Đã đặt'
+    default:
+      return 'Ẩn'
+  }
+}
 
 export function removeAccents(str: string) {
   return str
