@@ -37,7 +37,7 @@ export const useUpdateDish = () => {
         mutationFn: ({ id, ...body }: UpdateDishBodyType & { id: number }) =>
             dishApiRequest.updateDish(id, body),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['accountList'], exact: true }); // Refresh danh sách tài khoản
+            queryClient.invalidateQueries({ queryKey: ['dishList'], exact: true });
         }
     });
 };
@@ -47,7 +47,7 @@ export const useDeleteDish = () => {
     return useMutation({
         mutationFn: (id: number) => dishApiRequest.deleteDish(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['accountList'] }); // Refresh danh sách tài khoản
+            queryClient.invalidateQueries({ queryKey: ['dishList'] }); 
         }
     });
 };

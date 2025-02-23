@@ -37,12 +37,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import { formatCurrency, getVietnameseDishStatus } from '@/lib/utils'
+import { formatCurrency, getVietnameseDishStatus, handleErrorApi } from '@/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-pagination'
 import { DishListResType } from '@/schemaValidations/dish.schema'
 import EditDish from '@/app/manage/dishes/edit-dish'
 import AddDish from '@/app/manage/dishes/add-dish'
+import { useDeleteDish, useGeDishesList } from '@/queries/useDish'
+import { toast } from '@/hooks/use-toast'
 
 type DishItem = DishListResType['data'][0]
 
@@ -136,6 +138,24 @@ function AlertDialogDeleteDish({
   dishDelete: DishItem | null
   setDishDelete: (value: DishItem | null) => void
 }) {
+  const deleteDishMutation = useDeleteDish()
+  const deleteDish = async() => {
+    if(deleteDishMutation.isPending) return
+    if(dishDelete) {
+      try{
+        const kq= await deleteDishMutation.mutate(dishDelete.id)
+        setDishDelete(null)
+        toast({
+          description:"Xóa thành công"
+        })
+      }catch(error){
+        handleErrorApi({
+          error
+        })
+      }
+      
+    }
+  }
   return (
     <AlertDialog
       open={Boolean(dishDelete)}
@@ -155,7 +175,7 @@ function AlertDialogDeleteDish({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={deleteDish}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -169,7 +189,8 @@ export default function DishTable() {
   const pageIndex = page - 1
   const [dishIdEdit, setDishIdEdit] = useState<number | undefined>()
   const [dishDelete, setDishDelete] = useState<DishItem | null>(null)
-  const data: any[] = []
+  
+
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -178,6 +199,9 @@ export default function DishTable() {
     pageIndex, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
     pageSize: PAGE_SIZE //default page size
   })
+  const dishList = useGeDishesList()
+  const data:any=dishList.data?.payload.data ?? []
+
 
   const table = useReactTable({
     data,
