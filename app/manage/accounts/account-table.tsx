@@ -43,7 +43,10 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-pagination'
-import { useGetAccountList } from '@/queries/useAccount'
+import { useDeleteAccount, useGetAccountList } from '@/queries/useAccount'
+import { set } from 'date-fns'
+import { toast } from '@/hooks/use-toast'
+import { handleErrorApi } from '@/lib/utils'
 
 type AccountItem = AccountListResType['data'][0]
 
@@ -137,6 +140,24 @@ function AlertDialogDeleteAccount({
   employeeDelete: AccountItem | null
   setEmployeeDelete: (value: AccountItem | null) => void
 }) {
+  const deleteAccountMutation = useDeleteAccount()
+const deleteAccount = async() => {
+  if(deleteAccountMutation.isPending) return
+  if(employeeDelete) {
+    try{
+      const kq= await deleteAccountMutation.mutate(employeeDelete.id)
+      setEmployeeDelete(null)
+      toast({
+        description:"Xóa thành công"
+      })
+    }catch(error){
+      handleErrorApi({
+        error
+      })
+    }
+    
+  }
+}
   return (
     <AlertDialog
       open={Boolean(employeeDelete)}
@@ -156,7 +177,7 @@ function AlertDialogDeleteAccount({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={deleteAccount}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -173,6 +194,7 @@ export default function AccountTable() {
   const [employeeDelete, setEmployeeDelete] = useState<AccountItem | null>(null)
 
   const accountListQuery= useGetAccountList()
+  
   const data:any=accountListQuery.data?.payload.data ?? []
   
   const [sorting, setSorting] = useState<SortingState>([])
@@ -217,6 +239,7 @@ export default function AccountTable() {
     <AccountTableContext.Provider value={{ employeeIdEdit, setEmployeeIdEdit, employeeDelete, setEmployeeDelete }}>
       <div className='w-full'>
         <EditEmployee id={employeeIdEdit} setId={setEmployeeIdEdit} onSubmitSuccess={() => {}} />
+          
         <AlertDialogDeleteAccount employeeDelete={employeeDelete} setEmployeeDelete={setEmployeeDelete} />
         <div className='flex items-center py-4'>
           <Input
