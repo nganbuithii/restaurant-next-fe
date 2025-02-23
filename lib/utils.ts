@@ -71,8 +71,8 @@ export const checkRefreshToken = async (param?: {
 }) => {
   const accessToken = getAccessTokenFromLocalStorage()
   const refreshToken = getRefreshTokenFromLocalStorage()
-  console.log("access", accessToken)
-  console.log("refresh", refreshToken)
+  // console.log("access", accessToken)
+  // console.log("refresh", refreshToken)
 
   if (!accessToken || !refreshToken) return
 
@@ -91,7 +91,7 @@ export const checkRefreshToken = async (param?: {
   if (decodeAccessToken.exp - now < (decodeAccessToken.exp - decodeAccessToken.iat) / 3) {
     try {
       const res = await authApiRequest.refreshToken()
-      console.log("res", res)
+      // console.log("res", res)
       setAccessTokenToLocalStorage(res.payload.data.accessToken)
       setRefreshTokenToLocalStorage(res.payload.data.refreshToken)
       param?.onSuccess && param.onSuccess()
