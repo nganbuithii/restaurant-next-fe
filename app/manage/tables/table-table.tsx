@@ -43,6 +43,7 @@ import { TableListResType } from '@/schemaValidations/table.schema'
 import EditTable from '@/app/manage/tables/edit-table'
 import AddTable from '@/app/manage/tables/add-table'
 import { useGettableList } from '@/queries/useTable'
+import { QRCodeTable } from '@/components/QRCodeTable'
 
 type TableItem = TableListResType['data'][0]
 
@@ -77,8 +78,14 @@ export const columns: ColumnDef<TableItem>[] = [
   {
     accessorKey: 'token',
     header: 'QR Code',
-    cell: ({ row }) => <div>{row.getValue('number')}</div>
-  },
+    cell: ({ row }) => (
+      <QRCodeTable
+        token={row.getValue('token')}
+        tableNumber={row.getValue('number')}
+      />
+    )
+  }
+  ,
   {
     id: 'actions',
     enableHiding: false,

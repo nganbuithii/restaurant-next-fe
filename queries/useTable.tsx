@@ -1,6 +1,4 @@
-import dishApiRequest from "@/apiRequests/dish"
 import tableApirequest from "@/apiRequests/tables"
-import { UpdateDishBodyType } from "@/schemaValidations/dish.schema"
 import { UpdateTableBodyType } from "@/schemaValidations/table.schema"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
