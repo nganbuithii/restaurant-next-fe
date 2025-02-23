@@ -117,6 +117,9 @@ export const getVietnameseDishStatus = (status: (typeof DishStatus)[keyof typeof
       return 'Ẩn'
   }
 }
+export const getTableLink = ({ token, tableNumber }: { token: string; tableNumber: number }) => {
+  return envConfig.NEXT_PUBLIC_URL + '/tables/' + tableNumber + '?token=' + token
+}
 
 export const getVietnameseOrderStatus = (status: (typeof OrderStatus)[keyof typeof OrderStatus]) => {
   switch (status) {
