@@ -25,6 +25,7 @@ import { DishStatus, DishStatusValues } from '@/constant/type'
 import { useUploadmedia } from '@/queries/useMedia'
 import { useGetDetailDish, useUpdateDish } from '@/queries/useDish'
 import { toast } from '@/hooks/use-toast'
+import revalidateApiRequest from '@/apiRequests/revalidate'
 
 export default function EditDish({
   id,
@@ -93,7 +94,7 @@ export default function EditDish({
       }
 
       const kq = await updateMutation.mutateAsync(body)
-      
+      await revalidateApiRequest('dishes')
       toast({
         description: kq.payload.message,
       })
