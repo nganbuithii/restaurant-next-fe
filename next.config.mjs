@@ -7,7 +7,11 @@ const nextConfig = {
                 hostname: 'localhost',
                 port: '4000',
                 pathname: '/**',
-                search: '',
+            },
+            {
+                protocol: 'https',
+                hostname: 'via.placeholder.com',
+                pathname: '/**',
             },
         ],
     },

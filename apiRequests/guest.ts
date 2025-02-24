@@ -1,6 +1,7 @@
-import { GuestLoginBodyType, GuestLoginResType } from '@/schemaValidations/guest.schema';
+import { GuestCreateOrdersBodyType, GuestCreateOrdersResType, GuestGetOrdersResType, GuestLoginBodyType, GuestLoginResType } from '@/schemaValidations/guest.schema';
 import { LoginBodyType, LoginResType, LogoutBodyType, RefreshTokenBodyType, RefreshTokenResType } from './../schemaValidations/auth.schema';
 import http from "@/lib/http";
+import { get } from 'http';
 
 const guestApiRequest ={
     refreshTokenRequest: null as Promise<{
@@ -34,7 +35,10 @@ const guestApiRequest ={
         const result = await this.refreshTokenRequest
         this.refreshTokenRequest = null
         return result
-    }
+    },
+
+    order:(body: GuestCreateOrdersBodyType) => http.post<GuestCreateOrdersResType>('/guest/orders', body),
+    getOrders: () => http.get<GuestGetOrdersResType>('/guest/orders'),
 
 }
 
