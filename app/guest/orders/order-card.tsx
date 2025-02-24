@@ -2,20 +2,50 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import socket from "@/lib/socket"
 import { formatCurrency, getVietnameseOrderStatus } from "@/lib/utils"
 import { useGetOrderList } from "@/queries/useGuest"
+import { UpdateOrderResType } from "@/schemaValidations/order.schema"
 import Image from "next/image"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 
 
 export default function OrderCard() {
-    const { data } = useGetOrderList()
+    const { data, refetch } = useGetOrderList()
     const orders = data?.payload.data ?? []
     const totalPrice = useMemo(() => {
         return orders.reduce((kq, order) => {
             return kq + order.dishSnapshot.price * order.quantity
         }, 0)
     }, [orders])
+
+
+    useEffect(() => {
+        if (socket.connected) {
+            onConnect();
+        }
+
+        function onConnect() {
+            console.log("id",socket.id)
+
+        }
+
+        function onDisconnect() {
+            console.log("disconnect")
+        }
+function onUpdateOder (data:UpdateOrderResType) {
+    refetch()
+}
+        socket.on("update-order", onUpdateOder);
+        socket.on("connect", onConnect);
+        socket.on("disconnect", onDisconnect);
+
+        return () => {
+            socket.off("connect", onConnect);
+            socket.off("disconnect", onDisconnect);
+            socket.off("update-order", onUpdateOder);
+        };
+    }, []);
     return (
         <>
             {orders.map((order, index) => (
