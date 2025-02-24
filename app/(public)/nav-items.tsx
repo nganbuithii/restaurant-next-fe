@@ -1,12 +1,16 @@
 'use client'
 
 import { useAppContext } from '@/components/app-provider'
+import { AlertDialogHeader } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
 import { Role } from '@/constant/type'
 import { handleErrorApi } from '@/lib/utils'
 import { useLogOut } from '@/queries/useAuth'
 import { RoleType } from '@/types/jwt.types'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 interface NavigationItem {
   title: string;
   href: string;
@@ -44,6 +48,8 @@ const menuItems: NavigationItem[] = [
 export default function NavItems({ className }: { className?: string }) {
   const { isAuth, role, setRole, setIsAuth } = useAppContext()
   const logoutMutation = useLogOut()
+  const [open, setOpen] = useState(false)
+
   const router = useRouter()
   const logout = async () => {
     if (logoutMutation.isPending) return
@@ -52,11 +58,13 @@ export default function NavItems({ className }: { className?: string }) {
       setRole(undefined)
       setIsAuth(false)
       router.push("/")
+      setOpen(false)
     } catch (error) {
       handleErrorApi({ error })
     }
 
   }
+
 
   return (
     <>
@@ -75,11 +83,28 @@ export default function NavItems({ className }: { className?: string }) {
         return null
       })}
 
-      
-      {role && isAuth&& (
-        <button onClick={logout} className={className}>
+
+      {role && isAuth && (
+        <button onClick={() => setOpen(true)} className={className}>
           Đăng xuất
         </button>
+      )}
+      {role && isAuth && (
+        <>
+          <Dialog open={open} onOpenChange={setOpen}>
+
+            <DialogContent>
+              <AlertDialogHeader>
+                <h3 className="text-lg font-semibold">Xác nhận đăng xuất</h3>
+                <p>Bạn có chắc chắn muốn đăng xuất?</p>
+              </AlertDialogHeader>
+              <DialogFooter>
+                <Button variant="secondary" onClick={() => setOpen(false)}>No</Button>
+                <Button variant="destructive" onClick={logout}>Yes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     </>
   )

@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { toast } from "@/hooks/use-toast"
 import socket from "@/lib/socket"
 import { formatCurrency, getVietnameseOrderStatus } from "@/lib/utils"
 import { useGetOrderList } from "@/queries/useGuest"
@@ -26,16 +27,20 @@ export default function OrderCard() {
         }
 
         function onConnect() {
-            console.log("id",socket.id)
+            console.log("id", socket.id)
 
         }
 
         function onDisconnect() {
             console.log("disconnect")
         }
-function onUpdateOder (data:UpdateOrderResType) {
-    refetch()
-}
+        function onUpdateOder(data: UpdateOrderResType['data']) {
+            const {dishSnapshot : {name}} = data
+            toast({
+                description:    ` Món ${name} vừa được chuyển sang trạng thái ${getVietnameseOrderStatus(data.status)} `
+            })
+            refetch()
+        }
         socket.on("update-order", onUpdateOder);
         socket.on("connect", onConnect);
         socket.on("disconnect", onDisconnect);
