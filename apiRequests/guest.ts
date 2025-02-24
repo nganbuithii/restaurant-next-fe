@@ -30,7 +30,7 @@ const guestApiRequest ={
     severRefreshToken: (body: RefreshTokenBodyType) => http.post<RefreshTokenResType>('/guest/auth/refresh-token', body),
     async refreshToken() {
         if (this.refreshTokenRequest) return this.refreshTokenRequest
-        this.refreshTokenRequest = http.post<RefreshTokenResType>('/api/auth/refresh-token', null, { baseUrl: '' })
+        this.refreshTokenRequest = http.post<RefreshTokenResType>('/api/guest/auth/refresh-token', null, { baseUrl: '' })
         const result = await this.refreshTokenRequest
         this.refreshTokenRequest = null
         return result

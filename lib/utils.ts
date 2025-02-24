@@ -7,11 +7,13 @@ import { format } from 'date-fns'
 import { BookX, CookingPot, HandCoins, Loader, Truck } from 'lucide-react'
 import { io } from 'socket.io-client'
 import slugify from 'slugify'
-import { DishStatus, OrderStatus, TableStatus } from '@/constant/type'
+import { DishStatus, OrderStatus, Role, TableStatus } from '@/constant/type'
 import { toast } from '@/hooks/use-toast'
 import jwt from "jsonwebtoken"
 import authApiRequest from '@/apiRequests/auth'
 import { TokenPayload } from '@/types/jwt.types'
+import { decode } from 'punycode'
+import guestApiRequest from '@/apiRequests/guest'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -51,7 +53,9 @@ export const handleErrorApi = ({
 }
 
 const isBrowser = typeof window !== 'undefined'
-
+export const decodeToken = (token: string) => {
+  return jwt.decode(token) as TokenPayload
+}
 export const getAccessTokenFromLocalStorage = () =>
   isBrowser ? localStorage.getItem('accessToken') : null
 
@@ -91,7 +95,8 @@ export const checkRefreshToken = async (param?: {
 
   if (decodeAccessToken.exp - now < (decodeAccessToken.exp - decodeAccessToken.iat) / 3) {
     try {
-      const res = await authApiRequest.refreshToken()
+      const role = decodeToken(refreshToken).role
+      const res = role ===Role.Guest ? ( await guestApiRequest.refreshToken()) : (await authApiRequest.refreshToken())
       // console.log("res", res)
       setAccessTokenToLocalStorage(res.payload.data.accessToken)
       setRefreshTokenToLocalStorage(res.payload.data.refreshToken)
@@ -216,6 +221,3 @@ export const getIdFromSlugUrl = (slug: string) => {
 }
 
 
-export const decodeToken = (token: string) => {
-  return jwt.decode(token) as TokenPayload
-}
