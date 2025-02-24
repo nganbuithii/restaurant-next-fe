@@ -12,7 +12,7 @@ function Logout() {
     const { mutateAsync } = useLogOut();
     const ref = useRef<any>(null);
 
-    const { setIsAuth } = useAppContext()
+    const { setIsAuth , setRole} = useAppContext()
 
     const searchParams = useSearchParams()
     const refreshTokenFrommUrl = searchParams.get('refreshToken')
@@ -30,7 +30,7 @@ function Logout() {
         else if (accessTokenFromUrl !== getAccessTokenFromLocalStorage()) {
             router.push('/')
         }
-    }, [mutateAsync, router, refreshTokenFrommUrl, accessTokenFromUrl, setIsAuth]);
+    }, [mutateAsync, router, refreshTokenFrommUrl, accessTokenFromUrl, setIsAuth, setRole]);
 
     return null
 }

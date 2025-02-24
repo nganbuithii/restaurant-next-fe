@@ -17,7 +17,7 @@ import { useAppContext } from '@/components/app-provider'
 
 export default function LoginForm() {
   const  loginMuutation = useLogin()
-  const { setIsAuth } = useAppContext()
+  const { setIsAuth, setRole } = useAppContext()
 
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -33,8 +33,9 @@ export default function LoginForm() {
   useEffect(()=>{
     if(clearToken){
       setIsAuth(false)
+      setRole(undefined)
     }
-  },[clearToken, setIsAuth])
+  },[clearToken, setIsAuth, setRole])
   const onSubmit = async(data: LoginBodyType) => {
     // khi submit thì react hook form validate form bằng zod schema ở client trc
     if (loginMuutation.isPending) return;
@@ -44,6 +45,7 @@ export default function LoginForm() {
         description: res.payload.message 
       })
       setIsAuth(true)
+      setRole(res.payload.data.account.role)
       router.push('/manage/dashboard')
     }catch(error:any){
       handleErrorApi({

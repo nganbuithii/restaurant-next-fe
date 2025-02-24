@@ -11,6 +11,7 @@ import { DishStatus, OrderStatus, TableStatus } from '@/constant/type'
 import { toast } from '@/hooks/use-toast'
 import jwt from "jsonwebtoken"
 import authApiRequest from '@/apiRequests/auth'
+import { TokenPayload } from '@/types/jwt.types'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -212,4 +213,9 @@ export const generateSlugUrl = ({ name, id }: { name: string; id: number }) => {
 
 export const getIdFromSlugUrl = (slug: string) => {
   return Number(slug.split('-i.')[1])
+}
+
+
+export const decodeToken = (token: string) => {
+  return jwt.decode(token) as TokenPayload
 }

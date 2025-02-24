@@ -7,7 +7,8 @@ import {
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import RefreshToken from './refresh-token'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { getAccessTokenFromLocalStorage, removeTokensFromLocalStorage } from '@/lib/utils'
+import {  decodeToken, getAccessTokenFromLocalStorage, removeTokensFromLocalStorage } from '@/lib/utils'
+import { RoleType } from '@/types/jwt.types'
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -16,13 +17,16 @@ const queryClient = new QueryClient({
         },
     }
 })
-
 const AppContext = createContext<{
+    role: RoleType | undefined;
+    setRole: (role: RoleType | undefined) => void;
     isAuth: boolean;
     setIsAuth: (isAuth: boolean) => void;
 }>({
+    role: undefined,
+    setRole: () => {},
     isAuth: false,
-    setIsAuth: () => {}
+    setIsAuth: () => {},
 });
 
 
@@ -34,12 +38,21 @@ export const useAppContext = () => {
 
 export default function AppProvider({ children }: { children: React.ReactNode }) {
     const [isAuth, setIsAuthState] = useState(false)
-    useEffect(()=>{
+    const [role, setRoleState] = useState<RoleType | undefined>()
+    useEffect(() => {
         const accessToken = getAccessTokenFromLocalStorage()
         if (accessToken) {
             setIsAuthState(true)
+            const role= decodeToken(accessToken).role
+            setRoleState(role)
         }
     })
+    const setRole = useCallback((role?:RoleType | undefined) => {
+        setRoleState(role)
+        if(!role){
+            removeTokensFromLocalStorage()
+        }
+    }, [])
     const setIsAuth = useCallback((isAuth: boolean) => {
         if (isAuth) {
             setIsAuthState(true)
@@ -49,7 +62,7 @@ export default function AppProvider({ children }: { children: React.ReactNode })
         }
     },[])
     return (
-        <AppContext.Provider value={{ isAuth, setIsAuth }}>
+        <AppContext.Provider value={{ role, setRole, isAuth, setIsAuth }}>
 
             <QueryClientProvider client={queryClient}>
                 {children}
