@@ -157,15 +157,24 @@ const updateOrderMutation = useUpdateOrder()
       })
       refetchOrderList()
     }
+    function onPayment(data: PayGuestOrdersResType['data']) {
+      const { guest } = data[0]
+      toast({
+        description: ` Khách ${guest?.name} bàn ${guest?.tableNumber} thanh toán ${data.length} đơn`,
+      })
+      refetch()
+    }
     socket.on("new-order", onNewOder);
     socket.on("connect", onConnect);
     socket.on("update-order", onUpdateOder);
+    socket.on("payment", onPayment);
     socket.on("disconnect", onDisconnect);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("new-order", onNewOder);
+      socket.off("payment", onPayment);
       socket.off("update-order", onUpdateOder);
 
     };

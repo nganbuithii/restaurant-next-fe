@@ -6,7 +6,7 @@ import { toast } from "@/hooks/use-toast"
 import socket from "@/lib/socket"
 import { formatCurrency, getVietnameseOrderStatus } from "@/lib/utils"
 import { useGetOrderList } from "@/queries/useGuest"
-import { UpdateOrderResType } from "@/schemaValidations/order.schema"
+import { PayGuestOrdersResType, UpdateOrderResType } from "@/schemaValidations/order.schema"
 import Image from "next/image"
 import { useEffect, useMemo } from "react"
 
@@ -35,20 +35,29 @@ export default function OrderCard() {
             console.log("disconnect")
         }
         function onUpdateOder(data: UpdateOrderResType['data']) {
-            const {dishSnapshot : {name}} = data
+            const { dishSnapshot: { name } } = data
             toast({
-                description:    ` Món ${name} vừa được chuyển sang trạng thái ${getVietnameseOrderStatus(data.status)} `
+                description: ` Món ${name} vừa được chuyển sang trạng thái ${getVietnameseOrderStatus(data.status)} `
+            })
+            refetch()
+        }
+        function onPayment(data: PayGuestOrdersResType['data']) {
+            const { guest } = data[0]
+            toast({
+                description: ` Thanh toán thành công bàn ${guest?.tableNumber} thanh toán ${data.length} đơn`,
             })
             refetch()
         }
         socket.on("update-order", onUpdateOder);
         socket.on("connect", onConnect);
+        socket.on("payment", onPayment);
         socket.on("disconnect", onDisconnect);
 
         return () => {
             socket.off("connect", onConnect);
             socket.off("disconnect", onDisconnect);
             socket.off("update-order", onUpdateOder);
+            socket.off("payment", onPayment);
         };
     }, []);
     return (

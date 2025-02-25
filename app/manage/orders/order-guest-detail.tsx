@@ -6,8 +6,10 @@ import {
   formatCurrency,
   formatDateTimeToLocaleString,
   formatDateTimeToTimeString,
-  getVietnameseOrderStatus
+  getVietnameseOrderStatus,
+  handleErrorApi
 } from '@/lib/utils'
+import { usePayOrder } from '@/queries/useOrders'
 import { GetOrdersResType } from '@/schemaValidations/order.schema'
 import Image from 'next/image'
 import { Fragment } from 'react'
@@ -19,6 +21,20 @@ export default function OrderGuestDetail({ guest, orders }: { guest: Guest; orde
     ? orders.filter((order) => order.status !== OrderStatus.Paid && order.status !== OrderStatus.Rejected)
     : []
   const purchasedOrderFilter = guest ? orders.filter((order) => order.status === OrderStatus.Paid) : []
+
+  const payMutation = usePayOrder()
+
+
+  const handlePayOrder = async () => {
+    if (payMutation.isPending || !guest) return
+    try {
+
+      await payMutation.mutateAsync({ guestId: guest.id })
+    } catch (error) {
+      handleErrorApi({ error })
+    }
+  }
+
   return (
     <div className='space-y-2 text-sm'>
       {guest && (
@@ -115,7 +131,7 @@ export default function OrderGuestDetail({ guest, orders }: { guest: Guest; orde
       </div>
 
       <div>
-        <Button className='w-full' size={'sm'} variant={'secondary'} disabled={ordersFilterToPurchase.length === 0}>
+        <Button className='w-full' size={'sm'} variant={'secondary'} disabled={ordersFilterToPurchase.length === 0} onClick={ handlePayOrder}>
           Thanh toán tất cả ({ordersFilterToPurchase.length} đơn)
         </Button>
       </div>
