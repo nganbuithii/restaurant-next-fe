@@ -19,6 +19,7 @@ import { cn, getVietnameseTableStatus, simpleMatchText } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { TableListResType } from '@/schemaValidations/table.schema'
 import { TableStatus } from '@/constant/type'
+import { useGettableList } from '@/queries/useTable'
 
 type TableItem = TableListResType['data'][0]
 
@@ -48,7 +49,10 @@ const PAGE_SIZE = 10
 
 export function TablesDialog({ onChoose }: { onChoose: (table: TableItem) => void }) {
   const [open, setOpen] = useState(false)
-  const data: TableListResType['data'] = []
+
+  const getDataList = useGettableList()
+
+  const data = getDataList.data?.payload.data ?? []
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})

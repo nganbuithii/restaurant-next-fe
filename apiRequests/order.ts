@@ -1,4 +1,4 @@
-import { GetOrderDetailResType, PayGuestOrdersBodyType, PayGuestOrdersResType } from './../schemaValidations/order.schema';
+import { CreateOrdersBodyType, CreateOrdersResType, GetOrderDetailResType, PayGuestOrdersBodyType, PayGuestOrdersResType } from './../schemaValidations/order.schema';
 import http from '@/lib/http';
 import { GetOrdersQueryParamsType, GetOrdersResType, UpdateOrderBodyType, UpdateOrderResType } from '@/schemaValidations/order.schema';
 import queryString from 'query-string';
@@ -17,6 +17,8 @@ const orderApirequest = {
 
     getOrderDetail : (id: number) => http.get<GetOrderDetailResType>(`${prefix}/${id}`),
     pay:( body:PayGuestOrdersBodyType) => http.post<PayGuestOrdersResType>(`${prefix}/pay`, body),
+
+    createOrder: (body: CreateOrdersBodyType) => http.post<CreateOrdersResType>(`${prefix}`, body),
 
 }
 
