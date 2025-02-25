@@ -1,12 +1,21 @@
+import { GetOrderDetailResType } from './../schemaValidations/order.schema';
 import http from '@/lib/http';
-import { GetOrdersResType, UpdateOrderBodyType, UpdateOrderResType } from '@/schemaValidations/order.schema';
+import { GetOrdersQueryParamsType, GetOrdersResType, UpdateOrderBodyType, UpdateOrderResType } from '@/schemaValidations/order.schema';
+import queryString from 'query-string';
 
 
-const prefix='/orders'
+const prefix = '/orders'
 const orderApirequest = {
-    getOrderList :() => http.get<GetOrdersResType>(`${prefix}`),
-    updateOrder:(id:number, body: UpdateOrderBodyType) => http.put<UpdateOrderResType>(`${prefix}/${id}`, body),
-  
+    // query string : chuyển obj sang string
+    getOrderList: (queryParams: GetOrdersQueryParamsType) => http.get<GetOrdersResType>(`${prefix}?`+ queryString.stringify(
+        {
+            fromDate: queryParams.fromDate?.toISOString(),
+            toDate: queryParams.toDate?.toISOString(),
+        }
+    )),
+    updateOrder: (id: number, body: UpdateOrderBodyType) => http.put<UpdateOrderResType>(`${prefix}/${id}`, body),
+
+    getOrderDetail : (id: number) => http.get<GetOrderDetailResType>(`${prefix}/${id}`),
 
 }
 
