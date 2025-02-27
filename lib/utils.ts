@@ -72,7 +72,8 @@ export const removeTokensFromLocalStorage = () => {
 }
 export const checkRefreshToken = async (param?: {
   onError?: () => void,
-  onSuccess?: () => void
+  onSuccess?: () => void, 
+  force?: boolean
 }) => {
   const accessToken = getAccessTokenFromLocalStorage()
   const refreshToken = getRefreshTokenFromLocalStorage()
@@ -93,7 +94,7 @@ export const checkRefreshToken = async (param?: {
 
   }
 
-  if (decodeAccessToken.exp - now < (decodeAccessToken.exp - decodeAccessToken.iat) / 3) {
+  if (param?.force || (decodeAccessToken.exp - now < (decodeAccessToken.exp - decodeAccessToken.iat) / 3)) {
     try {
       const role = decodeToken(refreshToken).role
       const res = role ===Role.Guest ? ( await guestApiRequest.refreshToken()) : (await authApiRequest.refreshToken())

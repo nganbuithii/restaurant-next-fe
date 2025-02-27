@@ -1,5 +1,6 @@
 'use client'
 
+import socket from "@/lib/socket"
 import { checkRefreshToken } from "@/lib/utils"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -13,25 +14,48 @@ export default function RefreshToken() {
     const pathname = usePathname()
     useEffect(() => {
         if (UNAUTHENTICATED_ROUTES.includes(pathname)) return
+        const onCheckRefreshToken = (force?: boolean) => {
+            checkRefreshToken({
+                onError: () => {
+                    clearInterval(interval),
+                        router.push("/login")
+                }, force
+            })
+        }
 
-      
         let interval: any = null
-        checkRefreshToken({
-            onError: () => {
-                clearInterval(interval),
-                    router.push("/login")
-            }
-        })
+        onCheckRefreshToken()
+
+        if (socket.connected) {
+            onConnect();
+        }
+
+        function onConnect() {
+            console.log("id", socket.id)
+
+        }
+
+        function onDisconnect() {
+            console.log("disconnect")
+        }
+        function onCheckRefreshTokenSocket() {
+            onCheckRefreshToken(true)
+        }
+        socket.on("connect", onConnect);
+        socket.on("disconnect", onDisconnect);
+        socket.on("refresh-token", onCheckRefreshTokenSocket);
+
 
         checkRefreshToken() // Gọi hàm ngay lập tức
-        interval = setInterval(() => checkRefreshToken({
-            onError: () => {
-                clearInterval(interval)
-                router.push("/login")
-            }
-        }), 1000) // Gọi lại sau mỗi 10s
+        interval = setInterval(onCheckRefreshToken, 1000) // Gọi lại sau mỗi 10s
 
-        return () => clearInterval(interval)
+        return () => {
+            clearInterval(interval)
+            socket.off("connect", onConnect);
+            socket.off("disconnect", onDisconnect);
+            socket.off("refresh-token", onCheckRefreshTokenSocket);
+
+        }
     }, [pathname, router])
 
     return null
