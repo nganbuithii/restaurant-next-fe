@@ -10,6 +10,7 @@ const managePath = ['/manage']
 const guestPath = ['/guest']
 const privatePath = [...managePath, ...guestPath]
 const unAuthPath = ['/login']
+const onlyOwnerPath = ['/manage/accounts']
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const accessToken = request.cookies.get('accessToken')?.value;
@@ -41,6 +42,12 @@ export function middleware(request: NextRequest) {
         // nếu sai role. nếu khách vào role của owner  --> redirect về trang chủ
         const role = decodeToken(refreshToken).role
         if((role === Role.Guest && managePath.some(path => pathname.startsWith(path))) || (role !== Role.Guest && guestPath.some(path => pathname.startsWith(path)))){
+            return NextResponse.redirect(new URL('/', request.url));
+        }
+
+        // Chặn quyền của nhân viên nếu vào admin
+        const isNotOwnerPath = role !== Role.Owner && onlyOwnerPath.some(path => pathname.startsWith(path))
+        if(isNotOwnerPath || onlyOwnerPath ){
             return NextResponse.redirect(new URL('/', request.url));
         }
 
