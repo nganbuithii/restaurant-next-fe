@@ -16,6 +16,10 @@ export function middleware(request: NextRequest) {
     const accessToken = request.cookies.get('accessToken')?.value;
     const refreshToken = request.cookies.get('refreshToken')?.value;
 
+    // console.log(`Middleware triggered for: ${pathname}`);
+    // console.log(`accessToken: ${accessToken}, refreshToken: ${refreshToken}`);
+
+
     // Nếu truy cập trang cần quyền (privatePath) mà chưa đăng nhập => Chuyển hướng đến trang login
     if (privatePath.some(path => pathname.startsWith(path)) && !refreshToken) {
         const url = new URL('/login', request.url)
@@ -46,10 +50,11 @@ export function middleware(request: NextRequest) {
         }
 
         // Chặn quyền của nhân viên nếu vào admin
-        const isNotOwnerPath = role !== Role.Owner && onlyOwnerPath.some(path => pathname.startsWith(path))
-        if(isNotOwnerPath || onlyOwnerPath ){
+        const isNotOwnerPath = role !== Role.Owner && onlyOwnerPath.some(path => pathname.startsWith(path));
+        if (isNotOwnerPath) {
             return NextResponse.redirect(new URL('/', request.url));
         }
+        
 
     }
     return NextResponse.next();
