@@ -8,17 +8,36 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLogin } from '@/queries/useAuth'
-import { describe } from 'node:test'
-import { toast } from '@/hooks/use-toast'
-import { handleErrorApi, removeTokensFromLocalStorage } from '@/lib/utils'
+import {  handleErrorApi} from '@/lib/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { useAppContext } from '@/components/app-provider'
+import envConfig from '@/config'
+import Link from 'next/link'
+
+const getOauthGoogleUrl = () => {
+  const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
+  const options = {
+    redirect_uri: envConfig.NEXT_PUBLIC_GOOGLE_AUTHORIZED_REDIRECT_URI,
+    client_id: envConfig.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    access_type: 'offline',
+    response_type: 'code',
+    prompt: 'consent',
+    scope: [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ].join(' ')
+  }
+  const qs = new URLSearchParams(options)
+  return `${rootUrl}?${qs.toString()}`
+}
+
+const ggOauth = getOauthGoogleUrl()
 
 export default function LoginForm() {
-  const  loginMuutation = useLogin()
+  const loginMuutation = useLogin()
   const { setIsAuth, setRole } = useAppContext()
-
+  const { setSocket } = useAppContext()
   const router = useRouter()
   const searchParams = useSearchParams()
   const clearToken = searchParams.get('clearToken')
@@ -30,28 +49,26 @@ export default function LoginForm() {
     }
   })
 
-  useEffect(()=>{
-    if(clearToken){
+  useEffect(() => {
+    if (clearToken) {
       setIsAuth(false)
       setRole(undefined)
     }
-  },[clearToken, setIsAuth, setRole])
-  const onSubmit = async(data: LoginBodyType) => {
+  }, [clearToken, setIsAuth, setRole])
+  const onSubmit = async (data: LoginBodyType) => {
     // khi submit thì react hook form validate form bằng zod schema ở client trc
     if (loginMuutation.isPending) return;
-    try{
-      const res=await loginMuutation.mutateAsync(data)
-      toast({
-        description: res.payload.message 
-      })
+    try {
+      const res = await loginMuutation.mutateAsync(data)
       setIsAuth(true)
       setRole(res.payload.data.account.role)
+      // setSocket?.(generateSocketInstace(res.payload.data.accessToken))
       router.push('/manage/dashboard')
-    }catch(error:any){
+    } catch (error: any) {
       handleErrorApi({
         error,
         setError: form.setError
-      })      
+      })
     }
   }
   return (
@@ -62,8 +79,8 @@ export default function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate 
-          onSubmit={form.handleSubmit(onSubmit)}>
+          <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate
+            onSubmit={form.handleSubmit(onSubmit)}>
             <div className='grid gap-4'>
               <FormField
                 control={form.control}
@@ -96,9 +113,12 @@ export default function LoginForm() {
               <Button type='submit' className='w-full'>
                 Đăng nhập
               </Button>
-              <Button variant='outline' className='w-full' type='button'>
-                Đăng nhập bằng Google
-              </Button>
+              <Link href={ggOauth} className='w-full'>
+                <Button variant='outline' className='w-full' type='button'>
+                  Đăng nhập bằng Google
+                </Button>
+              </Link>
+
             </div>
           </form>
         </Form>

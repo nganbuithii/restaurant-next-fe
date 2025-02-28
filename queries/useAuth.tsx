@@ -14,3 +14,10 @@ export const useLogOut = () => {
         mutationFn:authApiRequest.logout
     })
 }
+
+
+export const useSetTokenToCookies = () => {
+    return useMutation({
+        mutationFn:authApiRequest.setTokenToCookies
+    })
+}

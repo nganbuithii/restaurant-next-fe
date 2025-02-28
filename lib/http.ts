@@ -166,23 +166,11 @@ const request = async <Response>(
     const normalizeUrl = normalizePath(url)
     if (['api/auth/login', 'api/guest/auth/login'].includes(normalizeUrl)) {
       const { accessToken, refreshToken } = (payload as LoginResType).data
-    //   setAccessTokenToLocalStorage(accessToken)
-    //   setRefreshTokenToLocalStorage(refreshToken)
     localStorage.setItem('accessToken', accessToken)
     localStorage.setItem('refreshToken', refreshToken)
-    } else if ('api/auth/token' === normalizeUrl) {
-      const { accessToken, refreshToken } = payload as {
-        accessToken: string
-        refreshToken: string
-      }
-    //   setAccessTokenToLocalStorage(accessToken)
-    //   setRefreshTokenToLocalStorage(refreshToken)
-    localStorage.setItem('accessToken', accessToken)
-    localStorage.setItem('refreshToken', refreshToken)  
     } else if (
       ['api/auth/logout', 'api/guest/auth/logout'].includes(normalizeUrl)
     ) {
-    //   removeTokensFromLocalStorage()
     localStorage.removeItem('accessToken')
     }
   }

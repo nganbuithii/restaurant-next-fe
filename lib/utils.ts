@@ -14,6 +14,7 @@ import authApiRequest from '@/apiRequests/auth'
 import { TokenPayload } from '@/types/jwt.types'
 import { decode } from 'punycode'
 import guestApiRequest from '@/apiRequests/guest'
+import socket from './socket'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -179,13 +180,13 @@ export const formatDateTimeToTimeString = (date: string | Date) => {
   return format(date instanceof Date ? date : new Date(date), 'HH:mm:ss')
 }
 
-export const generateSocketInstace = (accessToken: string) => {
-  return io(envConfig.NEXT_PUBLIC_RESTAURANT_API, {
-    auth: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  })
-}
+// export const generateSocketInstace = (accessToken: string) => {
+//   return io(envConfig.NEXT_PUBLIC_RESTAURANT_API, {
+//     auth: {
+//       Authorization: `Bearer ${accessToken}`
+//     }
+//   })
+// }
 
 export const OrderStatusIcon = {
   [OrderStatus.Pending]: Loader,
