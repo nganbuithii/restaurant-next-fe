@@ -7,7 +7,6 @@ export async function POST(request: Request) {
         accessToken: string
         refreshToken: string
     }
-    console.log("BODY NHAN DC:", body)
     const cookiesSrore = cookies()
     try {
         const { accessToken, refreshToken } = body

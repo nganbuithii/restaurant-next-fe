@@ -38,13 +38,17 @@ export default function OauthPage() {
                 count.current++
 
             }
-
-
-
         } else {
-            toast({
-                description: message || " Lỗi login"
-            })
+            console.log("lỗi", message)
+            if(count.current === 0) {
+                setTimeout(()=> {
+                        toast({
+                    description: message ?? 'Đã có lỗi xảy ra'
+                })
+                })
+            
+                count.current++
+            }
         }
     }, [accessToken, refreshToken, setRole, message])
     return null
