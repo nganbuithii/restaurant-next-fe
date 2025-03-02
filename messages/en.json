@@ -1,0 +1,13 @@
+{
+  "HomePage": {
+    "title": "Naniri Restaurant"
+  },
+  "switch_language": {
+    "title": "Change Language",
+    "en": "English",
+    "vi": "Vietnamese"
+  },
+  "login": {
+    "title": "Login"
+  }
+}

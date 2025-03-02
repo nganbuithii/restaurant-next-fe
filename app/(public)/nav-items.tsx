@@ -1,6 +1,7 @@
 'use client'
 
 import { useAppContext } from '@/components/app-provider'
+import LocaleSwitcherSelect from '@/components/LocaleSwitcherSelect'
 import { AlertDialogHeader } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
@@ -44,7 +45,10 @@ const menuItems: NavigationItem[] = [
     role: [Role.Employee, Role.Owner]
   }
 ]
-
+const localeOptions = [
+  { value: 'vi', label: 'Tiếng Việt' },
+  { value: 'en', label: 'English' }
+]
 export default function NavItems({ className }: { className?: string }) {
   const { isAuth, role, setRole, setIsAuth } = useAppContext()
   const logoutMutation = useLogOut()
@@ -106,6 +110,12 @@ export default function NavItems({ className }: { className?: string }) {
           </Dialog>
         </>
       )}
+
+<LocaleSwitcherSelect 
+        // items={localeOptions} 
+        // label="Chọn ngôn ngữ" 
+      />
+
     </>
   )
 }

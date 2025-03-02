@@ -14,6 +14,7 @@ import { useEffect } from 'react'
 import { useAppContext } from '@/components/app-provider'
 import envConfig from '@/config'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 const getOauthGoogleUrl = () => {
   const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
@@ -71,10 +72,11 @@ export default function LoginForm() {
       })
     }
   }
+  const t = useTranslations('login')
   return (
     <Card className='mx-auto max-w-sm'>
       <CardHeader>
-        <CardTitle className='text-2xl'>Đăng nhập</CardTitle>
+        <CardTitle className='text-2xl'>{t('title')}</CardTitle>
         <CardDescription>Nhập email và mật khẩu của bạn để đăng nhập vào hệ thống</CardDescription>
       </CardHeader>
       <CardContent>

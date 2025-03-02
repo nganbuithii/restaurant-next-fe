@@ -19,6 +19,10 @@ const configProject = configSchema.safeParse({
 if(!configProject.success){
     throw new Error("Invalid environment variables")
 }
+export type Locale = (typeof locales)[number];
+
+export const locales = ['en', 'vi'] as const;
+export const defaultLocale: Locale = 'vi';
 
 const envConfig = configProject.data
 

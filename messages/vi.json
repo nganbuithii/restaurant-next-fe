@@ -1,0 +1,13 @@
+{
+  "HomePage": {
+    "title": "Nhà hàng naniri!"
+  },
+  "switch_language": {
+    "title": "Đổi ngôn ngữ",
+    "en": "Tiếng Anh",
+    "vi": "Tiếng Việt"
+  },
+  "login": {
+    "title": "Đăng nhập"
+  }
+}
