@@ -9,5 +9,10 @@
   },
   "login": {
     "title": "Đăng nhập"
+  },
+  "ErrorMessage": {
+    "invalidEmail": "Email không hợp lệ",
+    "required": "Trường này không được để trống",
+    "minmaxPassword": "Mật khẩu phải từ 6 đến 100 ký tự"
   }
 }

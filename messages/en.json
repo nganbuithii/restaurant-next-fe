@@ -9,5 +9,10 @@
   },
   "login": {
     "title": "Login"
+  },
+  "ErrorMessage": {
+    "invalidEmail": "Invalid email",
+    "required": "This field is required",
+    "minmaxPassword": "Password must be between 6 and 100 characters"
   }
 }
