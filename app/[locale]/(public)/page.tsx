@@ -1,4 +1,6 @@
 import dishApiRequest from '@/apiRequests/dish'
+import { Link } from '@/i18n/navigation';
+import { generateSlugUrl } from '@/lib/utils';
 import { DishListResType } from '@/schemaValidations/dish.schema'
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
@@ -38,8 +40,11 @@ export default async function Home() {
         <h2 className='text-center text-2xl font-bold'>Đa dạng các món ăn</h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-10'>
           {dishList.map((dish, index) => (
-              <div className='flex gap-4 w' key={dish.id}>
-                <div className='flex-shrink-0'>
+            <Link href={`/dishes/${generateSlugUrl({
+              name: dish.name,
+              id: dish.id
+            })}`} key={dish.id} className="block">           
+              <div className='flex-shrink-0'>
                   <Image
                     src={dish.image ?? ''} alt={dish.name} width="100" height="100"
                     className='object-cover w-[150px] h-[150px] rounded-md'
@@ -50,7 +55,7 @@ export default async function Home() {
                   <p className=''>{dish.description}</p>
                   <p className='font-semibold'>{dish.price}</p>
                 </div>
-              </div>
+                </Link>
             ))}
         </div>
       </section>

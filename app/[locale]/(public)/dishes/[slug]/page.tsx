@@ -1,13 +1,13 @@
 import dishApiRequest from "@/apiRequests/dish"
-import { wrapServerApi } from "@/lib/utils"
+import { getIdFromSlugUrl, wrapServerApi } from "@/lib/utils"
 import Image from "next/image"
 
-export default async function DishPage({ params: { id } }: {
+export default async function DishPage({ params: { slug } }: {
     params: {
-        id: string
+        slug: string
     }
 }) {
-    
+    const id = getIdFromSlugUrl(slug)
     const data = await wrapServerApi(()=> dishApiRequest.getDetailDish(Number(id)))
     const dish = data?.payload?.data
     if (!dish) {

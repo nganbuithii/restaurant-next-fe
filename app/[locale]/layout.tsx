@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: 'Big Boy Restaurant',
   description: 'The best restaurant in the world'
 }
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({locale}));
+}
 
 export default async function RootLayout({
   children,
@@ -31,6 +34,7 @@ export default async function RootLayout({
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
+  
 
   // Providing all messages to the client
   // side is the easiest way to get started

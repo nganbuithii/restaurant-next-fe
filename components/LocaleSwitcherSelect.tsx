@@ -6,28 +6,35 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 import { useLocale, useTranslations } from 'next-intl';
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
 type Props = {
     defaultValue: string;
     items: Array<{ value: string; label: string }>;
     label: string;
 };
-
-export default function LocaleSwitcherSelect() {
+export default function LocaleSwitcherSelect(){
+    return (
+        <Suspense>
+            <LocaleSwitcherSelectComp/>
+        </Suspense>
+    )
+}
+ function LocaleSwitcherSelectComp() {
     const t = useTranslations('switch_language')
 
-const pathName = usePathname()
-const router = useRouter()
-const searchParams = useSearchParams()
-const param = useParams()
+    const pathName = usePathname()
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const param = useParams()
     const locale = useLocale();
 
     return (
         <div className="relative">
-            <Select  value={locale} onValueChange={value => {
+            <Select value={locale} onValueChange={value => {
                 const locale = param.locale as Locale
                 const newPathName = pathName.replace(`/${locale}`, `/${value}`)
-                const fullUrl =  `${newPathName}?${searchParams.toString()}`
+                const fullUrl = `${newPathName}?${searchParams.toString()}`
                 router.replace(fullUrl)
 
             }}>
