@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { GetOrdersResType, PayGuestOrdersResType, UpdateOrderResType } from '@/schemaValidations/order.schema'
 
-import { createContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-pagination'
 import { getVietnameseOrderStatus, handleErrorApi } from '@/lib/utils'
@@ -41,9 +41,9 @@ import AddOrder from './add-order'
 
 
 export const OrderTableContext = createContext({
-  setOrderIdEdit: (value: number | undefined) => { },
+  setOrderIdEdit: (_value: number | undefined) => { },
   orderIdEdit: undefined as number | undefined,
-  changeStatus: (payload: {
+  changeStatus: (_payload: {
     orderId: number
     dishId: number
     status: (typeof OrderStatusValues)[number]
@@ -180,7 +180,7 @@ const updateOrderMutation = useUpdateOrder()
       socket.off("update-order", onUpdateOder);
 
     };
-  }, [refetchOrderList]);
+  }, [refetchOrderList, fromDate, toDate]);
   useEffect(() => {
     table.setPagination({
       pageIndex,

@@ -40,13 +40,13 @@ export default function UpdateProfileForm() {
       })
     }
   }, [data, form])
-  const avatar = form.watch('avatar')
+  // const avatar = form.watch('avatar')
   const name = form.watch('name')
   const previewAvt = useMemo(() => {
     if (!file) return null;
     const url = URL.createObjectURL(file);
     return url;
-  }, [file, avatar]);
+  }, [file]);
 
   const reset = () => {
     form.reset()

@@ -53,15 +53,17 @@ export default function EditTable({
   const onSubmit = async (data: UpdateTableBodyType) => {
     if (editTableMutation.isPending) return
     try {
-      let body: UpdateTableBodyType & { id: number } = { id: id as number, ...data }
+      const body: UpdateTableBodyType & { id: number } = { id: id as number, ...data }
       const kq = await editTableMutation.mutateAsync(body)
     
       toast({
         description: kq.payload.message,
       })
       reset()
-      onSubmitSuccess && onSubmitSuccess()
-      
+      if (onSubmitSuccess) {
+        onSubmitSuccess();
+      }
+            
     } catch (error) {
       handleErrorApi({
         error,

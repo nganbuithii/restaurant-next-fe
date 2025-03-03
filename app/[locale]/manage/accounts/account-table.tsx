@@ -42,7 +42,6 @@ import {
 import { useSearchParams } from 'next/navigation'
 import AutoPagination from '@/components/auto-pagination'
 import { useDeleteAccount, useGetAccountList } from '@/queries/useAccount'
-import { set } from 'date-fns'
 import { toast } from '@/hooks/use-toast'
 import { handleErrorApi } from '@/lib/utils'
 import AddEmployee from './add-employee'
@@ -56,10 +55,10 @@ const AccountTableContext = createContext<{
   employeeDelete: AccountItem | null
   setEmployeeDelete: (value: AccountItem | null) => void
 }>({
-  setEmployeeIdEdit: (value: number | undefined) => {},
+  setEmployeeIdEdit: () => {},
   employeeIdEdit: undefined,
   employeeDelete: null,
-  setEmployeeDelete: (value: AccountItem | null) => {}
+  setEmployeeDelete: () => {}
 })
 
 export const columns: ColumnDef<AccountType>[] = [
@@ -145,7 +144,7 @@ const deleteAccount = async() => {
   if(deleteAccountMutation.isPending) return
   if(employeeDelete) {
     try{
-      const kq= await deleteAccountMutation.mutate(employeeDelete.id)
+       await deleteAccountMutation.mutate(employeeDelete.id)
       setEmployeeDelete(null)
       toast({
         description:"Xóa thành công"

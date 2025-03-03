@@ -102,7 +102,9 @@ export default function EditEmployee({
         description: kq.payload.message,
       })
 
-      onSubmitSuccess && onSubmitSuccess()
+      if (onSubmitSuccess) {
+        onSubmitSuccess()
+      }
     } catch (error) {
       handleErrorApi({
         error,

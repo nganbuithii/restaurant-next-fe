@@ -55,10 +55,10 @@ const DishTableContext = createContext<{
   dishDelete: DishItem | null
   setDishDelete: (value: DishItem | null) => void
 }>({
-  setDishIdEdit: (value: number | undefined) => {},
+  setDishIdEdit: () => {},
   dishIdEdit: undefined,
   dishDelete: null,
-  setDishDelete: (value: DishItem | null) => {}
+  setDishDelete: () => {}
 })
 
 export const columns: ColumnDef<DishItem>[] = [
@@ -144,7 +144,7 @@ function AlertDialogDeleteDish({
     if(deleteDishMutation.isPending) return
     if(dishDelete) {
       try{
-        const kq= await deleteDishMutation.mutate(dishDelete.id)
+        await deleteDishMutation.mutate(dishDelete.id)
         setDishDelete(null)
         toast({
           description:"Xóa thành công"

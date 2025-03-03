@@ -1,9 +1,8 @@
-import { access } from 'fs';
 import authApiRequest from "@/apiRequests/auth"
 import { cookies } from "next/headers"
 
 
-export async function POST(req: Request) {
+export async function POST() {
     const cookiesSrore = cookies()
     const accessToken = cookiesSrore.get('accessToken')?.value
     const refreshToken = cookiesSrore.get('refreshToken')?.value

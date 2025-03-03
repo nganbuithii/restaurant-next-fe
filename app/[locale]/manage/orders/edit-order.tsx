@@ -57,7 +57,7 @@ export default function EditOrder({
     if (updateOrderMutation.isPending) return
 
     try {
-      let body: UpdateOrderBodyType & { orderId: number } = {
+      const body: UpdateOrderBodyType & { orderId: number } = {
         ...values,
         orderId: id as number
       }
@@ -66,6 +66,10 @@ export default function EditOrder({
       toast({
         description: kq.payload.message
       })
+      if (onSubmitSuccess) {
+        onSubmitSuccess();
+      }
+      
       reset()
     } catch (error) {
       handleErrorApi({ error , setError: form.setError })
@@ -94,8 +98,8 @@ export default function EditOrder({
             noValidate
             className='grid auto-rows-max items-start gap-4 md:gap-8'
             id='edit-order-form'
-            onSubmit={form.handleSubmit(onSubmit, console.log)}
-          >
+            onSubmit={form.handleSubmit(onSubmit)}
+            >
             <div className='grid gap-4 py-4'>
               <FormField
                 control={form.control}
@@ -137,7 +141,7 @@ export default function EditOrder({
                           {...field}
                           value={field.value}
                           onChange={(e) => {
-                            let value = e.target.value
+                            const value = e.target.value
                             const numberValue = Number(value)
                             if (isNaN(numberValue)) {
                               return

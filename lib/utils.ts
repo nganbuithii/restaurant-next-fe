@@ -5,16 +5,13 @@ import { twMerge } from 'tailwind-merge'
 import envConfig from '@/config'
 import { format } from 'date-fns'
 import { BookX, CookingPot, HandCoins, Loader, Truck } from 'lucide-react'
-import { io } from 'socket.io-client'
 import slugify from 'slugify'
 import { DishStatus, OrderStatus, Role, TableStatus } from '@/constant/type'
 import { toast } from '@/hooks/use-toast'
 import jwt from "jsonwebtoken"
 import authApiRequest from '@/apiRequests/auth'
 import { TokenPayload } from '@/types/jwt.types'
-import { decode } from 'punycode'
 import guestApiRequest from '@/apiRequests/guest'
-import socket from './socket'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -68,12 +65,15 @@ export const setAccessTokenToLocalStorage = (value: string) =>
 export const setRefreshTokenToLocalStorage = (value: string) =>
   isBrowser && localStorage.setItem('refreshToken', value)
 export const removeTokensFromLocalStorage = () => {
-  isBrowser && localStorage.removeItem('accessToken')
-  isBrowser && localStorage.removeItem('refreshToken')
-}
+  if (isBrowser) {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  }
+};
+
 export const checkRefreshToken = async (param?: {
   onError?: () => void,
-  onSuccess?: () => void, 
+  onSuccess?: () => void,
   force?: boolean
 }) => {
   const accessToken = getAccessTokenFromLocalStorage()
@@ -83,14 +83,16 @@ export const checkRefreshToken = async (param?: {
 
   if (!accessToken || !refreshToken) return
 
-  const now = (new Date().getTime() / 1000) - 1 
+  const now = (new Date().getTime() / 1000) - 1
   // - 1 s vì cookie set bị chậm hơn khoảng vài tẳng mili s
   const decodeAccessToken = jwt.decode(accessToken) as { exp: number, iat: number }
   const decodeRefreshToken = jwt.decode(refreshToken) as { exp: number, iat: number }
 
   if (decodeRefreshToken.exp <= now) {
     removeTokensFromLocalStorage()
-    param?.onError && param.onError()     
+    if (param?.onError) {
+      param.onError();
+    }
     return
 
   }
@@ -98,13 +100,17 @@ export const checkRefreshToken = async (param?: {
   if (param?.force || (decodeAccessToken.exp - now < (decodeAccessToken.exp - decodeAccessToken.iat) / 3)) {
     try {
       const role = decodeToken(refreshToken).role
-      const res = role ===Role.Guest ? ( await guestApiRequest.refreshToken()) : (await authApiRequest.refreshToken())
+      const res = role === Role.Guest ? (await guestApiRequest.refreshToken()) : (await authApiRequest.refreshToken())
       // console.log("res", res)
       setAccessTokenToLocalStorage(res.payload.data.accessToken)
       setRefreshTokenToLocalStorage(res.payload.data.refreshToken)
-      param?.onSuccess && param.onSuccess()
-    } catch (error) {
-      param?.onError && param.onError()
+      if (param?.onSuccess) {
+        param.onSuccess();
+      }
+    } catch {
+      if (param?.onError) {
+        param.onError();
+      }
     }
   }
 }

@@ -1,18 +1,12 @@
 'use client';
 
 import { Locale, locales } from '@/config';
-import { Check, Languages } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useLocale, useTranslations } from 'next-intl';
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
-type Props = {
-    defaultValue: string;
-    items: Array<{ value: string; label: string }>;
-    label: string;
-};
 export default function LocaleSwitcherSelect(){
     return (
         <Suspense>

@@ -54,10 +54,10 @@ const TableTableContext = createContext<{
   tableDelete: TableItem | null
   setTableDelete: (value: TableItem | null) => void
 }>({
-  setTableIdEdit: (value: number | undefined) => { },
+  setTableIdEdit: () => { },
   tableIdEdit: undefined,
   tableDelete: null,
-  setTableDelete: (value: TableItem | null) => { }
+  setTableDelete: () => { }
 })
 
 export const columns: ColumnDef<TableItem>[] = [

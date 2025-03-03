@@ -4,13 +4,12 @@ import { useAppContext } from '@/components/app-provider'
 import LocaleSwitcherSelect from '@/components/LocaleSwitcherSelect'
 import { AlertDialogHeader } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import { Role } from '@/constant/type'
 import { Link } from '@/i18n/navigation'
 import { handleErrorApi } from '@/lib/utils'
 import { useLogOut } from '@/queries/useAuth'
 import { RoleType } from '@/types/jwt.types'
-import { useParams} from 'next/navigation'
 import { useRouter } from '@/i18n/navigation'
 import { useState } from 'react'
 interface NavigationItem {
@@ -51,7 +50,7 @@ export default function NavItems({ className }: { className?: string }) {
   const { isAuth, role, setRole, setIsAuth } = useAppContext()
   const logoutMutation = useLogOut()
   const [open, setOpen] = useState(false)
-  const { locale } = useParams();
+  // const { locale } = useParams();
   const router = useRouter()
   const logout = async () => {
     if (logoutMutation.isPending) return

@@ -9,7 +9,6 @@ import RefreshToken from './refresh-token'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import {  decodeToken,  getAccessTokenFromLocalStorage, removeTokensFromLocalStorage } from '@/lib/utils'
 import { RoleType } from '@/types/jwt.types'
-import { Socket } from 'socket.io-client'
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -23,15 +22,13 @@ export const AppContext = createContext<{
     setRole: (role: RoleType | undefined) => void;
     isAuth: boolean;
     setIsAuth: (isAuth: boolean) => void;
-    socket?: Socket;
-    setSocket?: (socket?: Socket | undefined) => void;
+
 }>({
     role: undefined,
     setRole: () => {},
     isAuth: false,
     setIsAuth: () => {},
-    socket: undefined,
-    setSocket: (socket?: Socket | undefined) => {}
+
 });
 
 
@@ -44,7 +41,6 @@ export const useAppContext = () => {
 export default function AppProvider({ children }: { children: React.ReactNode }) {
     const [isAuth, setIsAuthState] = useState(false)
     const [role, setRoleState] = useState<RoleType | undefined>()
-    const [socket, setSocket] = useState<Socket | undefined>(undefined);
 
     useEffect(() => {
         const accessToken = getAccessTokenFromLocalStorage()
@@ -52,10 +48,9 @@ export default function AppProvider({ children }: { children: React.ReactNode })
             setIsAuthState(true)
             const role= decodeToken(accessToken).role
             setRoleState(role)
-            // setSocket(generateSocketInstace(accessToken))
         
         }
-    })
+    },[setIsAuthState, setRoleState])
     const setRole = useCallback((role?:RoleType | undefined) => {
         setRoleState(role)
         if(!role){

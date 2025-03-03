@@ -8,7 +8,6 @@ import envConfig from '@/config'
 // } from '@/lib/utils'
 import { LoginResType } from '@/schemaValidations/auth.schema'
 import { normalizePath } from './utils'
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 // import { redirect } from '@/navigation'
 import Cookies from 'js-cookie'
@@ -137,8 +136,8 @@ const request = async <Response>(
           })
           try {
             await clientLogoutRequest
-          } catch (error) {
-          } finally {
+          } 
+           finally {
             // removeTokensFromLocalStorage()
             localStorage.removeItem('accessToken')  
             clientLogoutRequest = null

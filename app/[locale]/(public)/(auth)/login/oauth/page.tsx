@@ -6,16 +6,14 @@ import { useSetTokenToCookies } from '@/queries/useAuth'
 import {  useSearchParams } from 'next/navigation'
 import { useRouter } from '@/i18n/navigation'
 
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function OauthPage() {
-    const { setRole, setSocket } = useAppContext()
+    const { setRole} = useAppContext()
     const router = useRouter()
     const searchParams = useSearchParams()
     const accessToken = searchParams.get('accessToken')
-    console.log("accessToken", accessToken)
     const refreshToken = searchParams.get('refreshToken')
-    console.log("refres", refreshToken)
     const message = searchParams.get('message')
     const count = useRef(0)
 
@@ -52,6 +50,6 @@ export default function OauthPage() {
                 count.current++
             }
         }
-    }, [accessToken, refreshToken, setRole, message])
+    }, [accessToken, refreshToken, setRole, message, mutateAsync, router]); 
     return null
 }

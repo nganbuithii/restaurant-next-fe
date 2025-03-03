@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge'
 export default function MenuOrder() {
 
     const { data } = useGeDishesList()
-    const dishes = data?.payload.data ?? []
+    const dishes = useMemo(() => data?.payload.data ?? [], [data])
     const router = useRouter()
 
     const [orders, setOrder] = useState<GuestCreateOrdersBodyType>([])

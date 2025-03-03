@@ -30,7 +30,7 @@ export default function AddOrder() {
   const [orders, setOrders] = useState<CreateOrdersBodyType['orders']>([])
 
   const { data } = useGeDishesList()
-  const dishes = data?.payload.data ?? []
+  const dishes = useMemo(() => data?.payload.data ?? [], [data])
   const createOrderMutation = useCreateOrder()
   const createGuestMutation = useCreateGuest()
 

@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/pagination'
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 interface Props {
   page: number
   pageSize: number
@@ -40,7 +39,7 @@ Với range = 2 áp dụng cho khoảng cách đầu, cuối và xung quanh curr
  */
 
 const RANGE = 2
-export default function AutoPagination({ page, pageSize, pathname, isLink = true, onClick = (pagenumber) => { } }: Props) {
+export default function AutoPagination({ page, pageSize, pathname, isLink = true, onClick = () => { } }: Props) {
   const renderPagination = () => {
     let dotAfter = false
     let dotBefore = false
@@ -48,7 +47,7 @@ export default function AutoPagination({ page, pageSize, pathname, isLink = true
       if (!dotBefore) {
         dotBefore = true
         return (
-          <PaginationItem>
+          <PaginationItem key={`dot-before-${index}`}>
             <PaginationEllipsis />
           </PaginationItem>
         )
@@ -59,7 +58,7 @@ export default function AutoPagination({ page, pageSize, pathname, isLink = true
       if (!dotAfter) {
         dotAfter = true
         return (
-          <PaginationItem>
+          <PaginationItem key={`dot-after-${index}`}>
             <PaginationEllipsis />
           </PaginationItem>
         )

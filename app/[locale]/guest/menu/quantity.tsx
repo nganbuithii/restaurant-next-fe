@@ -13,7 +13,7 @@ export default function Quantity(
             </Button>
             <Input type='text' inputMode='numeric' pattern='[0-9]*' readOnly className='h-6 p-1 w-8 text-center]' value={value}
                 onChange={e => {
-                    let value = e.target.value
+                    const value = e.target.value
                     const numberValue = Number(value)
                     if (isNaN(numberValue)) {
                         return

@@ -2,7 +2,7 @@
 
 import socket from "@/lib/socket"
 import { checkRefreshToken } from "@/lib/utils"
-import { useRouter , usePathname} from '@/i18n/navigation'
+import { useRouter, usePathname } from '@/i18n/navigation'
 import { useEffect } from "react"
 
 
@@ -17,8 +17,8 @@ export default function RefreshToken() {
         const onCheckRefreshToken = (force?: boolean) => {
             checkRefreshToken({
                 onError: () => {
-                    clearInterval(interval),
-                        router.push("/login")
+                    clearInterval(interval)
+                    router.push("/login")
                 }, force
             })
         }

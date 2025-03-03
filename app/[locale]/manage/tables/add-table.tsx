@@ -34,7 +34,7 @@ export default function AddTable() {
   const onSubmit = async (data: CreateTableBodyType) => {
     if (addtableMutation.isPending) return
 
-    let body = data
+    const body = data
     try {
 
       const kq = await addtableMutation.mutateAsync(body)

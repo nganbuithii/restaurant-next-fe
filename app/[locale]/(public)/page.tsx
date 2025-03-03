@@ -2,7 +2,6 @@ import dishApiRequest from '@/apiRequests/dish'
 import { Link } from '@/i18n/navigation';
 import { generateSlugUrl } from '@/lib/utils';
 import { DishListResType } from '@/schemaValidations/dish.schema'
-import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image'
 
@@ -16,7 +15,7 @@ export default async function Home() {
     const {payload : {data}} = res
 
     dishList = data
-  }catch(error){
+  }catch{
     return <div> Try again</div>
   }
   return (
@@ -39,7 +38,7 @@ export default async function Home() {
       <section className='space-y-10 py-16'>
         <h2 className='text-center text-2xl font-bold'>Đa dạng các món ăn</h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-10'>
-          {dishList.map((dish, index) => (
+          {dishList.map((dish) => (
             <Link href={`/dishes/${generateSlugUrl({
               name: dish.name,
               id: dish.id

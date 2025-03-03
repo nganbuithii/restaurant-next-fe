@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle
@@ -99,8 +98,9 @@ export default function EditDish({
         description: kq.payload.message,
       })
       reset()
-      onSubmitSuccess && onSubmitSuccess()
-      
+      onSubmitSuccess?.()
+
+
     } catch (error) {
       handleErrorApi({
         error,
@@ -109,7 +109,7 @@ export default function EditDish({
     }
   }
 
-  const reset=()=>{
+  const reset = () => {
     setId(undefined)
     setFile(null)
   }

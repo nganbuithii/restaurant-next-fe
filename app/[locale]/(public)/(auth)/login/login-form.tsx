@@ -9,7 +9,7 @@ import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLogin } from '@/queries/useAuth'
 import {  handleErrorApi} from '@/lib/utils'
-import { useParams,  useSearchParams } from 'next/navigation'
+import {   useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { useAppContext } from '@/components/app-provider'
 import envConfig from '@/config'
@@ -37,12 +37,11 @@ const getOauthGoogleUrl = () => {
 const ggOauth = getOauthGoogleUrl()
 
 export default function LoginForm() {
-    const { locale } = useParams();
+    // const { locale } = useParams();
 
   const loginMuutation = useLogin()
   const errMsg = useTranslations('ErrorMessage')
   const { setIsAuth, setRole } = useAppContext()
-  const { setSocket } = useAppContext()
   const router = useRouter()
   const searchParams = useSearchParams()
   const clearToken = searchParams.get('clearToken')

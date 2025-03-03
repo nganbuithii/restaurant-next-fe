@@ -13,7 +13,7 @@ import { useEffect, useMemo } from "react"
 
 export default function OrderCard() {
     const { data, refetch } = useGetOrderList()
-    const orders = data?.payload.data ?? []
+    const orders = useMemo(() => data?.payload.data ?? [], [data])
     const totalPrice = useMemo(() => {
         return orders.reduce((kq, order) => {
             return kq + order.dishSnapshot.price * order.quantity
@@ -59,7 +59,7 @@ export default function OrderCard() {
             socket.off("update-order", onUpdateOder);
             socket.off("payment", onPayment);
         };
-    }, []);
+    }, [refetch]);
     return (
         <>
             {orders.map((order, index) => (

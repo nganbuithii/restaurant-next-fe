@@ -21,7 +21,7 @@ function Logout() {
     useEffect(() => {
         if (ref.current || (refreshTokenFrommUrl && refreshTokenFrommUrl === getRefreshTokenFromLocalStorage()) || (accessTokenFromUrl && accessTokenFromUrl === getAccessTokenFromLocalStorage())) {
             ref.current = mutateAsync
-            mutateAsync().then((res) => {
+            mutateAsync().then(() => {
                 setTimeout(() => {
                     ref.current = null
                 }, 1000)

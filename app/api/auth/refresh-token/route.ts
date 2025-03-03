@@ -1,7 +1,7 @@
 import authApiRequest from "@/apiRequests/auth"
 import { cookies } from "next/headers"
 import jwt from "jsonwebtoken"
-export async function POST(request: Request) {
+export async function POST() {
     const cookiesSrore = cookies()
     const refreshToken = cookiesSrore.get('refreshToken')?.value
     if (!refreshToken) {
