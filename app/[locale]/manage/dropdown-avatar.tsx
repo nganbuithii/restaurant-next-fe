@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useLogOut } from '@/queries/useAuth'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { useAccountProfile } from '@/queries/useAccount'
 import { useAppContext } from '@/components/app-provider'
 

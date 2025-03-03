@@ -9,12 +9,13 @@ import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLogin } from '@/queries/useAuth'
 import {  handleErrorApi} from '@/lib/utils'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useParams,  useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { useAppContext } from '@/components/app-provider'
 import envConfig from '@/config'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 
 const getOauthGoogleUrl = () => {
   const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
@@ -36,6 +37,8 @@ const getOauthGoogleUrl = () => {
 const ggOauth = getOauthGoogleUrl()
 
 export default function LoginForm() {
+    const { locale } = useParams();
+
   const loginMuutation = useLogin()
   const { setIsAuth, setRole } = useAppContext()
   const { setSocket } = useAppContext()
@@ -64,7 +67,7 @@ export default function LoginForm() {
       setIsAuth(true)
       setRole(res.payload.data.account.role)
       // setSocket?.(generateSocketInstace(res.payload.data.accessToken))
-      router.push('/manage/dashboard')
+      router.push(`/manage/dashboard`)
     } catch (error: any) {
       handleErrorApi({
         error,

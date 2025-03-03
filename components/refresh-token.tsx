@@ -2,7 +2,7 @@
 
 import socket from "@/lib/socket"
 import { checkRefreshToken } from "@/lib/utils"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter , usePathname} from '@/i18n/navigation'
 import { useEffect } from "react"
 
 

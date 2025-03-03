@@ -11,7 +11,7 @@ import { normalizePath } from './utils'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 // import { redirect } from '@/navigation'
-// import Cookies from 'js-cookie'
+import Cookies from 'js-cookie'
 type CustomOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined
 }
@@ -126,7 +126,7 @@ const request = async <Response>(
       )
     } else if (res.status === AUTHENTICATION_ERROR_STATUS) {
       if (isClient) {
-        // const locale = cookies.get('NEXT_LOCALE')
+        const locale = Cookies.get('NEXT_LOCALE')
         if (!clientLogoutRequest) {
           clientLogoutRequest = fetch('/api/auth/logout', {
             method: 'POST',
@@ -146,7 +146,7 @@ const request = async <Response>(
             // Nếu không không được xử lý đúng cách
             // Vì nếu rơi vào trường hợp tại trang Login, chúng ta có gọi các API cần access token
             // Mà access token đã bị xóa thì nó lại nhảy vào đây, và cứ thế nó sẽ bị lặp
-            // location.href = `/${locale}/login`
+            location.href = `/${locale}/login`
           }
         }
       } else {

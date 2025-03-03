@@ -2,10 +2,10 @@
 import menuItems from './menuItems'
 import { useAppContext } from '@/components/app-provider'
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
+import { usePathname } from '@/i18n/navigation'
 import { cn} from '@/lib/utils'
 import { Package2, Settings } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 export default function NavLinks() {
   const pathname = usePathname()

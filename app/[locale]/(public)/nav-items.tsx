@@ -6,11 +6,12 @@ import { AlertDialogHeader } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
 import { Role } from '@/constant/type'
+import { Link } from '@/i18n/navigation'
 import { handleErrorApi } from '@/lib/utils'
 import { useLogOut } from '@/queries/useAuth'
 import { RoleType } from '@/types/jwt.types'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useParams} from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { useState } from 'react'
 interface NavigationItem {
   title: string;
@@ -45,15 +46,12 @@ const menuItems: NavigationItem[] = [
     role: [Role.Employee, Role.Owner]
   }
 ]
-const localeOptions = [
-  { value: 'vi', label: 'Tiếng Việt' },
-  { value: 'en', label: 'English' }
-]
+
 export default function NavItems({ className }: { className?: string }) {
   const { isAuth, role, setRole, setIsAuth } = useAppContext()
   const logoutMutation = useLogOut()
   const [open, setOpen] = useState(false)
-
+  const { locale } = useParams();
   const router = useRouter()
   const logout = async () => {
     if (logoutMutation.isPending) return
@@ -79,7 +77,7 @@ export default function NavItems({ className }: { className?: string }) {
 
         if (isLogin || canShow) {
           return (
-            <Link href={item.href} key={item.href} className={className}>
+            <Link href={`/${item.href}`} key={item.href} className={className}>
               {item.title}
             </Link>
           )

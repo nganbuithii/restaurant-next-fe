@@ -3,7 +3,9 @@ import { useAppContext } from '@/components/app-provider'
 import { toast } from '@/hooks/use-toast'
 import { decodeToken, setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/lib/utils'
 import { useSetTokenToCookies } from '@/queries/useAuth'
-import { useRouter, useSearchParams } from 'next/navigation'
+import {  useSearchParams } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
+
 import React, { useEffect, useRef } from 'react'
 
 export default function OauthPage() {

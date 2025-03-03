@@ -5,7 +5,7 @@ import { Check, Languages } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { useLocale, useTranslations } from 'next-intl';
-import { setUserLocale } from '@/service/locale';
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 type Props = {
     defaultValue: string;
@@ -16,13 +16,19 @@ type Props = {
 export default function LocaleSwitcherSelect() {
     const t = useTranslations('switch_language')
 
-
+const pathName = usePathname()
+const router = useRouter()
+const searchParams = useSearchParams()
+const param = useParams()
     const locale = useLocale();
 
     return (
         <div className="relative">
             <Select  value={locale} onValueChange={value => {
-                setUserLocale(value as Locale)
+                const locale = param.locale as Locale
+                const newPathName = pathName.replace(`/${locale}`, `/${value}`)
+                const fullUrl =  `${newPathName}?${searchParams.toString()}`
+                router.replace(fullUrl)
 
             }}>
                 <SelectTrigger
