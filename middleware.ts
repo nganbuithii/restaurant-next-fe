@@ -1,6 +1,4 @@
-import { redirect } from 'next/navigation';
-import { access } from 'fs'
-import next from 'next'
+
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { decodeToken } from './lib/utils';
@@ -19,7 +17,6 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const accessToken = request.cookies.get('accessToken')?.value;
     const refreshToken = request.cookies.get('refreshToken')?.value;
-    console.log("VÀO MIDDLE WARE")
 
     const handleI18nRouting = createIntlMiddleware({
         locales: locales,
@@ -85,7 +82,7 @@ export function middleware(request: NextRequest) {
         const isNotOwnerPath = role !== Role.Owner && onlyOwnerPath.some(path => pathname.startsWith(path));
         if (isNotOwnerPath) {
             return NextResponse.redirect(new URL(`/${locale}/`, request.url));
-            
+
             // response.headers.set('x-default-locale', defaultLocale);
             // response.headers.set('x-middleware-rewrite', new URL('/', request.url).toString());
             // return response;
@@ -93,7 +90,7 @@ export function middleware(request: NextRequest) {
 
         }
 
-return response;
+        return response;
     }
     return response;
 }
@@ -104,5 +101,10 @@ return response;
 // };
 export const config = {
     // Match only internationalized pathnames
-    matcher: ['/', '/(vi|en)/:path*']
+    matcher: ['/', '/(vi|en)/:path*'],
+    unstable_allowDynamic: [
+        // Cho phép file utils.js chứa decodeToken
+        '/lib/utils.js',
+    ],
+    runtime: 'nodejs',
 };
