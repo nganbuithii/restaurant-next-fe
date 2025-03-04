@@ -106,5 +106,5 @@ export const config = {
         // Cho phép file utils.js chứa decodeToken
         '/lib/utils.ts',
     ],
-    runtime: 'edge',
+     runtime: 'experimental-edge' 
 };
