@@ -104,7 +104,7 @@ export const config = {
     matcher: ['/', '/(vi|en)/:path*'],
     unstable_allowDynamic: [
         // Cho phép file utils.js chứa decodeToken
-        '/lib/utils.js',
+        '/lib/utils.ts',
     ],
-    runtime: 'nodejs',
+    runtime: 'edge',
 };
