@@ -105,6 +105,7 @@ export const config = {
     unstable_allowDynamic: [
         // Cho phép file utils.js chứa decodeToken
         '/lib/utils.ts',
+        '/node_modules/function-bind/**',
     ],
      runtime: 'experimental-edge' 
 };
